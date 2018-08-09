@@ -1,0 +1,17 @@
+Temp/*
+Library/*
+profiles/*
+Assets/UnityVS/*
+Assets/UnityVS.meta
+ 
+*.pidb
+*.userprefs
+/Library
+/obj
+*.db
+/*.sln
+/*.suo
+/*.unityproj
+/*.csproj
+/*.unityproj
+*.DotSettings.user

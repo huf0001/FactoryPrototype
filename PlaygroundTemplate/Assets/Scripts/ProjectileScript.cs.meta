@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 4986a300e4e5c034db44c3e973eda809
+timeCreated: 1521690258
+licenseType: Free
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - collisionSound: {fileID: 8300000, guid: 30fbff9b49e5d0b46a24a16c13666b28, type: 3}
+  - collisionParticle: {fileID: 1899703320545138, guid: 952b64efc610f234eb22c678344ef0da,
+      type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

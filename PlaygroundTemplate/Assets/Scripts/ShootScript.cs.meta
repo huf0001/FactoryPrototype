@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 40374643bad492343857ff232bca0492
+timeCreated: 1521690258
+licenseType: Free
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - shootPrefab: {instanceID: 0}
+  - headDirection: {instanceID: 0}
+  - shootSound: {fileID: 8300000, guid: b5295e3a292b2ca48bceae7a0c506829, type: 3}
+  - shootParticle: {fileID: 1012381424426242, guid: 912aa84b129ac964eb4f11611828ac19,
+      type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
