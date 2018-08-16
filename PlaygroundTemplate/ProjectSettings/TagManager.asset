@@ -4,10 +4,7 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Destructable
-  - Ball
-  - Enemy
-  - Shield
+  - PlayerMoving
   layers:
   - Default
   - TransparentFX
