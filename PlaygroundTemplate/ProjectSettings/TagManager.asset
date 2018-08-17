@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - PlayerMoving
+  - P1
   layers:
   - Default
   - TransparentFX

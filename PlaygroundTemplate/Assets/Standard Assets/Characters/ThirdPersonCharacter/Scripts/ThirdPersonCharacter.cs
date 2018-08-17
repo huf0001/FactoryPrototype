@@ -28,11 +28,13 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 		Vector3 m_CapsuleCenter;
 		CapsuleCollider m_Capsule;
 		bool m_Crouching;
+		GameObject player;
 
 
 		void Start()
 		{
-			m_Animator = GetComponent<Animator>();
+			player = GameObject.FindWithTag ("P1");
+			m_Animator = player.GetComponent<Animator>();
 			m_Rigidbody = GetComponent<Rigidbody>();
 			m_Capsule = GetComponent<CapsuleCollider>();
 			m_CapsuleHeight = m_Capsule.height;
