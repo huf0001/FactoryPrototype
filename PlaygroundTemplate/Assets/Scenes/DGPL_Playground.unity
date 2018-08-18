@@ -622,6 +622,7 @@ Transform:
   - {fileID: 510709933}
   - {fileID: 1810861187}
   - {fileID: 882357276}
+  - {fileID: 1271642879}
   m_Father: {fileID: 839162046}
   m_RootOrder: 14
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -718,10 +719,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e37973ce68881964bbe6acc634819942, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  guide1: {fileID: 421742092}
-  guide2: {fileID: 510709933}
-  guide3: {fileID: 1810861187}
-  guide4: {fileID: 882357276}
   attachableTag: DroppedByPlayer
 --- !u!65 &453555158
 BoxCollider:
@@ -2131,6 +2128,34 @@ Transform:
 Transform:
   m_PrefabParentObject: {fileID: 400000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
   m_PrefabInternal: {fileID: 576938259}
+--- !u!1 &1271642878
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1271642879}
+  m_Layer: 0
+  m_Name: Guide (4)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1271642879
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1271642878}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.5, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 453555151}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1313852002
 GameObject:
   m_ObjectHideFlags: 0

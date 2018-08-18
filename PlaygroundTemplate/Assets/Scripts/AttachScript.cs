@@ -4,15 +4,6 @@ using UnityEngine;
 
 public class AttachScript : MonoBehaviour
 {
-    private GameObject item;
-    private GameObject item2;
-    private GameObject item3;
-    private GameObject item4;
-    public Transform guide1;
-    public Transform guide2;
-    public Transform guide3;
-    public Transform guide4;
-
     Dictionary<Transform, GameObject> AttachedItems;
     List<Transform> AvailableGuides;
 
@@ -23,17 +14,9 @@ public class AttachScript : MonoBehaviour
         AttachedItems = new Dictionary<Transform, GameObject>();
         AvailableGuides = new List<Transform>();
 
-        ListGuide(guide1);
-        ListGuide(guide2);
-        ListGuide(guide3);
-        ListGuide(guide4);
-    }
-
-    private void ListGuide(Transform guide)
-    {
-        if (guide != null)
+        for(int i = 0; i < transform.childCount; i++)
         {
-            AvailableGuides.Add(guide);
+            AvailableGuides.Add(transform.GetChild(i));
         }
     }
 
@@ -46,6 +29,7 @@ public class AttachScript : MonoBehaviour
         }
     }
 
+    //Just checking that there's an available guide object for each new attached object
     private bool CheckCanAttach()
     {
         bool result = true;
