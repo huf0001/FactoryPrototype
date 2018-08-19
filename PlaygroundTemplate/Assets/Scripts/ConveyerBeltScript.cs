@@ -10,9 +10,25 @@ public class ConveyerBeltScript : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        if (other.tag != "PlayerMoving")
+        if (!CheckPlayerMoving(other.gameObject))
         {
             other.transform.position = Vector3.MoveTowards(other.transform.position, endpoint.position, speed * Time.deltaTime);
         }
+    }
+
+    private bool CheckPlayerMoving(GameObject other)
+    {
+        bool result = false;
+        MoveObjectScript movable = other.gameObject.GetComponent<MoveObjectScript>();
+
+        if (movable != null)
+        {
+            if ((movable.HasIdentifier("PlayerMoving"))||(movable.HasIdentifier("Attached")))
+            {
+                result = true;
+            }     
+        }
+
+        return result;
     }
 }

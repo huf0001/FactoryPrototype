@@ -4,44 +4,64 @@ using UnityEngine;
 
 public class MoveObjectScript : MonoBehaviour
 {
-    public GameObject item;
+    private GameObject item;
     public GameObject tempParent;
     public Transform guide;
-    private string storedTag;
+    private Rigidbody body;
+    private List<string> identifiers = new List<string>();
 
-	// Use this for initialization
-	void Start ()
+    // Use this for initialization
+    void Start ()
     {
-        item.GetComponent<Rigidbody>().useGravity = true;
-        storedTag = "";
-	}
+        item = this.gameObject;
+        body = item.GetComponent<Rigidbody>();
+        body.useGravity = true;
+    }
+
+    public bool HasIdentifier(string id)
+    {
+        bool result = false;
+
+        if (identifiers.Contains(id))
+        {
+            result = true;
+        }
+
+        return result;
+    }
+
+    public void AddIdentifier(string id)
+    {
+        if (!identifiers.Contains(id))
+        {
+            identifiers.Add(id);
+        }
+    }
+
+    public void RemoveIdentifier(string id)
+    {
+        if (identifiers.Contains(id))
+        {
+            identifiers.Remove(id);
+        }
+    }
 
     void OnMouseDown()
     {
-        item.GetComponent<Rigidbody>().useGravity = false;
-        item.GetComponent<Rigidbody>().isKinematic = true;
+        body.useGravity = false;
+        body.isKinematic = true;
         item.transform.position = guide.transform.position;
         item.transform.rotation = guide.transform.rotation;
         item.transform.parent = tempParent.transform;
-        storedTag = this.tag;
-        this.tag = "PlayerMoving";
+        AddIdentifier("PlayerMoving");
     }
 
     void OnMouseUp()
     {
-        item.GetComponent<Rigidbody>().useGravity = true;
-        item.GetComponent<Rigidbody>().isKinematic = false;
+        body.useGravity = true;
+        body.isKinematic = false;
         item.transform.parent = null;
         item.transform.position = guide.transform.position;
-        this.tag = "DroppedByPlayer";
-    }
-
-    private void OnCollisionTrigger(Collision collision)
-    {
-        if (collision.gameObject.tag != "AttachBase")
-        {
-            this.tag = storedTag;
-            storedTag = "";
-        }
+        RemoveIdentifier("PlayerMoving");
     }
 }
