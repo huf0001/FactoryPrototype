@@ -8,6 +8,7 @@ public class AttachScript : MonoBehaviour
     List<Transform> AvailableGuides;
 
     public string attachableIdentifier;
+    public string attachBaseIdentifier;
 
     private void Start()
     {
@@ -18,18 +19,27 @@ public class AttachScript : MonoBehaviour
         {
             AvailableGuides.Add(transform.GetChild(i));
         }
+
+        if (this.gameObject.GetComponent<IdentifiableScript>() != null)
+        {
+            this.gameObject.GetComponent<IdentifiableScript>().AddIdentifier(attachBaseIdentifier);
+        }
+        else
+        {
+            Debug.Log("For " + this.gameObject.name + ", this.gameObject.GetComponent<IdentifiableScript>() doesn't exist.");
+        }
     }
 
     //If an attachable object collides with this object, attach it
     private void OnTriggerStay(Collider other)
     {
-        CheckCollisionTrigger(other);
+        HandleOnTriggerStay(other);
     }
 
     //For use if a dropped object collides with this object or an attached object
-    public void CheckCollisionTrigger(Collider other)
+    public void HandleOnTriggerStay(Collider other)
     {
-        MoveObjectScript temp = other.GetComponent<MoveObjectScript>();
+        IdentifiableScript temp = other.GetComponent<IdentifiableScript>();
 
         if (temp != null)
         {
@@ -42,11 +52,11 @@ public class AttachScript : MonoBehaviour
 
     //Just checking that there's an available guide object for each new attached object, and that said object
     //is attachable in the first place
-    private bool CheckCanAttach(MoveObjectScript temp)
+    private bool CheckCanAttach(IdentifiableScript temp)
     {
         bool result = true;
 
-        if ((AvailableGuides.Count == 0)|| (!temp.HasIdentifier(attachableIdentifier)))
+        if ((AvailableGuides.Count == 0)||(!temp.HasIdentifier(attachableIdentifier))||(!temp.HasIdentifier("Dropped")))
         {
             result = false;
         }
@@ -61,8 +71,10 @@ public class AttachScript : MonoBehaviour
         attaching.GetComponent<Rigidbody>().useGravity = false;
         attaching.GetComponent<Rigidbody>().isKinematic = true;
         attaching.transform.parent = this.gameObject.transform;
-        attaching.GetComponent<AttachableScript>().AddIdentifier("Attached");
-        attaching.GetComponent<AttachableScript>().RemoveIdentifier("Attachable");
+        attaching.GetComponent<IdentifiableScript>().AddIdentifier("Attached");
+        attaching.GetComponent<IdentifiableScript>().RemoveIdentifier("Attachable");
+        attaching.GetComponent<IdentifiableScript>().RemoveIdentifier("Dropped");
+        //attaching.GetComponent<AttachableScript>().AttachedTo = this;
     }
 
     //Assigns the object being attached to an appropriate attached object slot (and guide object?)

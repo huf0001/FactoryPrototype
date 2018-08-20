@@ -2,41 +2,104 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AttachableScript: MonoBehaviour
+public class AttachableScript: MoveObjectScript
 {
-    private MoveObjectScript movable;
-    
+    public string attachableIdentifier;
+    //private AttachScript attachedTo;
+
     // Use this for initialization
-	void Start()
+    void Start()
     {
-        movable = this.gameObject.GetComponent<MoveObjectScript>();
-        movable.AddIdentifier("Attachable");
+        HandleStart();
+    }
+
+    protected override void HandleStart()
+    {
+        base.HandleStart();
+        AddIdentifier("Attachable");
     }
 
     //If this is attached to something, this passes the colliding object to the attached base object
     //to see if the colliding object can also be attached
     private void OnTriggerStay(Collider other)
     {
-        if (movable.HasIdentifier("Attached"))
+        HandleOnTriggerStay(other);
+    }
+
+    protected override void HandleOnTriggerStay(Collider other)
+    {
+        if (HasIdentifier("Dropped"))
         {
-            transform.GetComponentInParent<AttachScript>().CheckCollisionTrigger(other);
+            HandleDropped(other.gameObject);
+        }
+        else if (HasIdentifier("Attached"))
+        {
+            HandleCollisionWhileAttached(other);
         }
     }
 
-    //These two methods I wouldn't include if I could avoid it; having AttachableScript.cs inherit from MoveObjectScript.cs
-    //would be more elegant. However, for whatever reason, doing it that way renders the objects with this script unmovable
-    //due to the inherited MoveObjectScript.cs being unable to find the rigidbody of the game object this script is attached
-    //to for whatever reason.
-    //
-    //These methods just let AttachScript.cs go through this script to change identifiers, so that it can't do that to
-    //movable objects that aren't also attachable.
-    public void AddIdentifier(string id)
+    protected virtual void HandleDropped(GameObject other)
     {
-        movable.AddIdentifier(id);
+        IdentifiableScript identifiable = other.GetComponent<IdentifiableScript>();
+        bool fallenOnAttachBase = false;
+
+        if (identifiable != null)
+        {
+            if ((identifiable.HasIdentifier(attachableIdentifier)) || (identifiable.HasIdentifier("Attached")))
+            {
+                fallenOnAttachBase = true;
+            }
+        }
+
+        if (!fallenOnAttachBase)
+        {
+            RemoveIdentifier("Dropped");
+        }
     }
 
-    public void RemoveIdentifier(string id)
+    protected virtual void HandleCollisionWhileAttached(Collider other)
     {
-        movable.RemoveIdentifier(id);
+        if (other.gameObject.GetComponent<IdentifiableScript>() != null)
+        {
+            if (other.gameObject.GetComponent<IdentifiableScript>().HasIdentifier("Dropped"))
+            {
+                try
+                {
+                    //attachedTo.CheckCollisionTrigger(other);
+                    transform.parent.GetComponent<AttachScript>().HandleOnTriggerStay(other);
+                }
+
+                catch
+                {
+                    //just trying to stop null reference exceptions that shouldn't happen but occur when you try to pick this up when it's attached
+                    //to something else and therefore not pickupable... yet
+                }
+            }
+        }
     }
+
+    /*protected override void HandleOnMouseDown()
+    {
+        if (HasIdentifier("Attached"))
+        {
+            //pass to the object this one is attached to
+        }
+        else
+        {
+            base.HandleOnMouseDown();
+        }
+    }*/
+
+
+    /*public AttachScript AttachedTo
+    {
+        get
+        {
+            return attachedTo;
+        }
+        set
+        {
+            attachedTo = value;
+        }
+    }*/
 }
