@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class MoveObjectScript : IdentifiableScript
 {
-    private GameObject item;
     public GameObject tempParent;
     public Transform guide;
     private Rigidbody body;
@@ -17,8 +16,7 @@ public class MoveObjectScript : IdentifiableScript
 
     protected virtual void HandleStart()
     {
-        item = this.gameObject;
-        body = item.GetComponent<Rigidbody>();
+        body = this.gameObject.GetComponent<Rigidbody>();
         body.useGravity = true;
     }
 
@@ -27,26 +25,14 @@ public class MoveObjectScript : IdentifiableScript
         HandleOnMouseDown();
     }
 
-    protected virtual void HandleOnMouseDown()
+    public virtual void HandleOnMouseDown()
     {
-        /*if (HasIdentifier("Attached"))
-        {
-            MoveObjectScript movable = this.transform.parent.GetComponent<MoveObjectScript>();
-
-            if (movable != null)
-            {
-                movable.OnMouseDown();
-            }
-        }
-        else
-        {*/
-            body.useGravity = false;
-            body.isKinematic = true;
-            item.transform.position = guide.transform.position;
-            item.transform.rotation = guide.transform.rotation;
-            item.transform.parent = tempParent.transform;
-            AddIdentifier("PlayerMoving");
-        //}
+        body.useGravity = false;
+        body.isKinematic = true;
+        transform.position = guide.transform.position;
+        transform.rotation = guide.transform.rotation;
+        transform.parent = tempParent.transform;
+        AddIdentifier("PlayerMoving");
     }
 
     void OnMouseUp()
@@ -54,12 +40,12 @@ public class MoveObjectScript : IdentifiableScript
         HandleOnMouseUp();
     }
 
-    protected virtual void HandleOnMouseUp()
+    public virtual void HandleOnMouseUp()
     {
         body.useGravity = true;
         body.isKinematic = false;
-        item.transform.parent = null;
-        item.transform.position = guide.transform.position;
+        transform.parent = null;
+        transform.position = guide.transform.position;
         RemoveIdentifier("PlayerMoving");
         AddIdentifier("Dropped");
     }
@@ -74,6 +60,18 @@ public class MoveObjectScript : IdentifiableScript
         if (HasIdentifier("Dropped"))
         {
             RemoveIdentifier("Dropped");
+        }
+    }
+
+    protected Rigidbody Body
+    {
+        get
+        {
+            return body;
+        }
+        set
+        {
+            body = value;
         }
     }
 }

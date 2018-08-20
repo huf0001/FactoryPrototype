@@ -74,7 +74,7 @@ public class AttachScript : MonoBehaviour
         attaching.GetComponent<IdentifiableScript>().AddIdentifier("Attached");
         attaching.GetComponent<IdentifiableScript>().RemoveIdentifier("Attachable");
         attaching.GetComponent<IdentifiableScript>().RemoveIdentifier("Dropped");
-        //attaching.GetComponent<AttachableScript>().AttachedTo = this;
+        attaching.GetComponent<AttachableScript>().AttachedTo = this;
     }
 
     //Assigns the object being attached to an appropriate attached object slot (and guide object?)
@@ -99,5 +99,43 @@ public class AttachScript : MonoBehaviour
     {
         attachedItem.transform.position = attachedGuide.transform.position;
         attachedItem.transform.rotation = attachedGuide.transform.rotation;
+    }
+
+    public void ReAttach(GameObject reAttaching)
+    {
+        reAttaching.GetComponent<Rigidbody>().useGravity = false;
+        reAttaching.GetComponent<Rigidbody>().isKinematic = true;
+        reAttaching.transform.parent = this.gameObject.transform;
+        reAttaching.GetComponent<IdentifiableScript>().AddIdentifier("Attached");
+        reAttaching.GetComponent<IdentifiableScript>().RemoveIdentifier("Attachable");
+        reAttaching.GetComponent<IdentifiableScript>().RemoveIdentifier("Dropped");
+        reAttaching.GetComponent<AttachableScript>().AttachedTo = this;
+
+        foreach (KeyValuePair<Transform, GameObject> p in AttachedItems)
+        {
+            if (p.Value == reAttaching)
+            {
+                Transform k = p.Key;
+                GameObject v = p.Value;
+
+                AttachedItems.Remove(k);
+                AttachedItems.Add(k, v);
+            }
+
+            return;
+        }
+    }
+
+    public Transform GetGuide(GameObject attached)
+    {
+        foreach (KeyValuePair<Transform, GameObject> p in AttachedItems)
+        {
+            if (p.Value == attached)
+            {
+                return p.Key;
+            }
+        }
+
+        return null;
     }
 }

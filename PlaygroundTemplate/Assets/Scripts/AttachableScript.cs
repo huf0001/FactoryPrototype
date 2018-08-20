@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AttachableScript: MoveObjectScript
+public class AttachableScript : MoveObjectScript
 {
     public string attachableIdentifier;
-    //private AttachScript attachedTo;
+    private AttachScript attachedTo;
 
     // Use this for initialization
     void Start()
@@ -65,33 +65,68 @@ public class AttachableScript: MoveObjectScript
             {
                 try
                 {
-                    //attachedTo.CheckCollisionTrigger(other);
                     transform.parent.GetComponent<AttachScript>().HandleOnTriggerStay(other);
                 }
 
                 catch
                 {
-                    //just trying to stop null reference exceptions that shouldn't happen but occur when you try to pick this up when it's attached
-                    //to something else and therefore not pickupable... yet
+                    //Stop null reference exceptions that shouldn't happen but occur when you try to pick this up when it's attached
+                    //to something else; Also has the side effect of "loosening" the attachment it has to the attachment base object,
+                    //so the use of ReAttach() "re-tightens" the attachment so that it isn't "loose"
+
+                    AttachedTo.ReAttach(this.gameObject);
+                    AttachedTo.HandleOnTriggerStay(other);
                 }
             }
         }
     }
 
-    /*protected override void HandleOnMouseDown()
+    public override void HandleOnMouseDown()
     {
         if (HasIdentifier("Attached"))
         {
             //pass to the object this one is attached to
+            try
+            {
+                //attachedTo.CheckCollisionTrigger(other);
+                transform.parent.GetComponent<MoveObjectScript>().HandleOnMouseDown();
+            }
+
+            catch
+            {
+                //Stop null reference exceptions that shouldn't happen but occur when you try to pick this up when it's attached
+                //to something else; Also has the side effect of "loosening" the attachment it has to the attachment base object,
+                //so the use of ReAttach() "re-tightens" the attachment so that it isn't "loose"
+
+                AttachedTo.ReAttach(this.gameObject);
+                AttachedTo.gameObject.GetComponent<MoveObjectScript>().HandleOnMouseDown();
+            }
         }
         else
         {
             base.HandleOnMouseDown();
         }
-    }*/
+    }
 
+    public override void HandleOnMouseUp()
+    {
+        if (HasIdentifier("Attached"))
+        {
+            Body.useGravity = true;
+            Body.isKinematic = false;
+            transform.parent = AttachedTo.GetGuide(this.gameObject).transform;
+            transform.position = AttachedTo.GetGuide(this.gameObject).transform.position;
+            RemoveIdentifier("PlayerMoving");
+            AttachedTo.gameObject.GetComponent<MoveObjectScript>().HandleOnMouseDown();
+            AttachedTo.gameObject.GetComponent<MoveObjectScript>().HandleOnMouseUp();
+        }
+        else
+        {
+            base.HandleOnMouseUp();
+        }
+    }
 
-    /*public AttachScript AttachedTo
+    public AttachScript AttachedTo
     {
         get
         {
@@ -101,5 +136,5 @@ public class AttachableScript: MoveObjectScript
         {
             attachedTo = value;
         }
-    }*/
+    }
 }
