@@ -5,6 +5,11 @@ TagManager:
   serializedVersion: 2
   tags:
   - PlayerMoving
+  - P1
+  - DroppedByPlayer
+  - Attached
+  - Environment
+  - AttachBase
   layers:
   - Default
   - TransparentFX

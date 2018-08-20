@@ -2,34 +2,76 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MoveObjectScript : MonoBehaviour
+public class MoveObjectScript : IdentifiableScript
 {
-    public GameObject item;
     public GameObject tempParent;
     public Transform guide;
+    private Rigidbody body;
 
-	// Use this for initialization
-	void Start ()
+    // Use this for initialization
+    void Start ()
     {
-        item.GetComponent<Rigidbody>().useGravity = true;
-	}
+        HandleStart();   
+    }
+
+    protected virtual void HandleStart()
+    {
+        body = this.gameObject.GetComponent<Rigidbody>();
+        body.useGravity = true;
+    }
 
     void OnMouseDown()
     {
-        item.GetComponent<Rigidbody>().useGravity = false;
-        item.GetComponent<Rigidbody>().isKinematic = true;
-        item.transform.position = guide.transform.position;
-        item.transform.rotation = guide.transform.rotation;
-        item.transform.parent = tempParent.transform;
-        this.tag = "PlayerMoving";
+        HandleOnMouseDown();
+    }
+
+    public virtual void HandleOnMouseDown()
+    {
+        body.useGravity = false;
+        body.isKinematic = true;
+        transform.position = guide.transform.position;
+        transform.rotation = guide.transform.rotation;
+        transform.parent = tempParent.transform;
+        AddIdentifier("PlayerMoving");
     }
 
     void OnMouseUp()
     {
-        item.GetComponent<Rigidbody>().useGravity = true;
-        item.GetComponent<Rigidbody>().isKinematic = false;
-        item.transform.parent = null;
-        item.transform.position = guide.transform.position;
-        this.tag = "Untagged";
+        HandleOnMouseUp();
+    }
+
+    public virtual void HandleOnMouseUp()
+    {
+        body.useGravity = true;
+        body.isKinematic = false;
+        transform.parent = null;
+        transform.position = guide.transform.position;
+        RemoveIdentifier("PlayerMoving");
+        AddIdentifier("Dropped");
+    }
+
+    void OnTriggerStay(Collider other)
+    {
+        HandleOnTriggerStay(other);
+    }
+
+    protected virtual void HandleOnTriggerStay(Collider other)
+    {
+        if (HasIdentifier("Dropped"))
+        {
+            RemoveIdentifier("Dropped");
+        }
+    }
+
+    protected Rigidbody Body
+    {
+        get
+        {
+            return body;
+        }
+        set
+        {
+            body = value;
+        }
     }
 }

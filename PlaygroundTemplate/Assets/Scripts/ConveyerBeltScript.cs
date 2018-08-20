@@ -10,9 +10,28 @@ public class ConveyerBeltScript : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        if (other.tag != "PlayerMoving")
+        if (!CheckPlayerMoving(other.gameObject))
         {
             other.transform.position = Vector3.MoveTowards(other.transform.position, endpoint.position, speed * Time.deltaTime);
         }
+
+        //Note: attachment base objects seem to move extra fast;  might need to add a secondary endpoint object
+        //for that object to move towards so that it gets kicked off the conveyor belt and doesn't knock other objects off 
+    }
+
+    private bool CheckPlayerMoving(GameObject other)
+    {
+        bool result = false;
+        MoveObjectScript movable = other.gameObject.GetComponent<MoveObjectScript>();
+
+        if (movable != null)
+        {
+            if ((movable.HasIdentifier("PlayerMoving"))||(movable.HasIdentifier("Attached")))
+            {
+                result = true;
+            }     
+        }
+
+        return result;
     }
 }
