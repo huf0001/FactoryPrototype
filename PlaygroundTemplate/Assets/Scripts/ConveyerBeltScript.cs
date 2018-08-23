@@ -10,7 +10,7 @@ public class ConveyerBeltScript : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        if (!CheckPlayerMoving(other.gameObject))
+        if (!CheckPlayerMoving(other.gameObject) && !CheckPlayerAvatar(other.gameObject))
         {
             other.transform.position = Vector3.MoveTowards(other.transform.position, endpoint.position, speed * Time.deltaTime);
         }
@@ -30,6 +30,17 @@ public class ConveyerBeltScript : MonoBehaviour
             {
                 result = true;
             }     
+        }
+
+        return result;
+    }
+
+    private bool CheckPlayerAvatar(GameObject other)
+    {
+        bool result = false;
+        if (other.tag == "PlayerAvatar")
+        {
+            result = true;
         }
 
         return result;

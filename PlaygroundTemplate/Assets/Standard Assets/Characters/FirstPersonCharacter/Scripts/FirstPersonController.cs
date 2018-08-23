@@ -10,6 +10,12 @@ namespace UnityStandardAssets.Characters.FirstPerson
     [RequireComponent(typeof (AudioSource))]
     public class FirstPersonController : MonoBehaviour
     {
+        [SerializeField] private bool thirdPerson = false;
+        [SerializeField] private bool verticalLook = true;
+        [SerializeField] private Camera firstPersonCamera;
+        [SerializeField] private Camera thirdPersonCamera;
+        //[SerializeField] private GameObject playerAvatar;
+
         [SerializeField] private bool m_IsWalking;
         [SerializeField] private float m_WalkSpeed;
         [SerializeField] private float m_RunSpeed;
@@ -46,7 +52,18 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private void Start()
         {
             m_CharacterController = GetComponent<CharacterController>();
-            m_Camera = Camera.main;
+
+            if (!thirdPerson)
+            {
+                m_Camera = firstPersonCamera;
+                thirdPersonCamera.enabled = false;
+            }
+            else
+            {
+                m_Camera = thirdPersonCamera;
+                firstPersonCamera.enabled = false;
+            }
+
             m_OriginalCameraPosition = m_Camera.transform.localPosition;
             m_FovKick.Setup(m_Camera);
             m_HeadBob.Setup(m_Camera, m_StepInterval);
@@ -55,8 +72,12 @@ namespace UnityStandardAssets.Characters.FirstPerson
             m_Jumping = false;
             m_AudioSource = GetComponent<AudioSource>();
 			m_MouseLook.Init(transform , m_Camera.transform);
-        }
 
+            if (!verticalLook)
+            {
+                m_MouseLook.YSensitivity = 0;
+            }
+        }
 
         // Update is called once per frame
         private void Update()
@@ -83,14 +104,12 @@ namespace UnityStandardAssets.Characters.FirstPerson
             m_PreviouslyGrounded = m_CharacterController.isGrounded;
         }
 
-
         private void PlayLandingSound()
         {
             m_AudioSource.clip = m_LandSound;
             m_AudioSource.Play();
             m_NextStep = m_StepCycle + .5f;
         }
-
 
         private void FixedUpdate()
         {
@@ -128,18 +147,20 @@ namespace UnityStandardAssets.Characters.FirstPerson
             m_CollisionFlags = m_CharacterController.Move(m_MoveDir*Time.fixedDeltaTime);
 
             ProgressStepCycle(speed);
-            UpdateCameraPosition(speed);
+
+            if (!thirdPerson)
+            {
+                UpdateCameraPosition(speed); //Dependant on 1st person or third person
+            }
 
             m_MouseLook.UpdateCursorLock();
         }
-
 
         private void PlayJumpSound()
         {
             m_AudioSource.clip = m_JumpSound;
             m_AudioSource.Play();
         }
-
 
         private void ProgressStepCycle(float speed)
         {
@@ -159,7 +180,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
             PlayFootStepAudio();
         }
 
-
         private void PlayFootStepAudio()
         {
             if (!m_CharacterController.isGrounded)
@@ -176,30 +196,33 @@ namespace UnityStandardAssets.Characters.FirstPerson
             m_FootstepSounds[0] = m_AudioSource.clip;
         }
 
-
         private void UpdateCameraPosition(float speed)
         {
-            Vector3 newCameraPosition;
             if (!m_UseHeadBob)
             {
                 return;
             }
-            if (m_CharacterController.velocity.magnitude > 0 && m_CharacterController.isGrounded)
-            {
-                m_Camera.transform.localPosition =
-                    m_HeadBob.DoHeadBob(m_CharacterController.velocity.magnitude +
-                                      (speed*(m_IsWalking ? 1f : m_RunstepLenghten)));
-                newCameraPosition = m_Camera.transform.localPosition;
-                newCameraPosition.y = m_Camera.transform.localPosition.y - m_JumpBob.Offset();
-            }
             else
             {
-                newCameraPosition = m_Camera.transform.localPosition;
-                newCameraPosition.y = m_OriginalCameraPosition.y - m_JumpBob.Offset();
-            }
-            m_Camera.transform.localPosition = newCameraPosition;
-        }
+                Vector3 newCameraPosition;
 
+                if ((m_CharacterController.velocity.magnitude > 0) && (m_CharacterController.isGrounded))
+                {
+                    m_Camera.transform.localPosition =
+                        m_HeadBob.DoHeadBob(m_CharacterController.velocity.magnitude +
+                                          (speed * (m_IsWalking ? 1f : m_RunstepLenghten)));
+                    newCameraPosition = m_Camera.transform.localPosition;
+                    newCameraPosition.y = m_Camera.transform.localPosition.y - m_JumpBob.Offset();
+                }
+                else
+                {
+                    newCameraPosition = m_Camera.transform.localPosition;
+                    newCameraPosition.y = m_OriginalCameraPosition.y - m_JumpBob.Offset();
+                }
+
+                m_Camera.transform.localPosition = newCameraPosition;
+            }
+        }
 
         private void GetInput(out float speed)
         {
@@ -233,12 +256,10 @@ namespace UnityStandardAssets.Characters.FirstPerson
             }
         }
 
-
         private void RotateView()
         {
             m_MouseLook.LookRotation (transform, m_Camera.transform);
         }
-
 
         private void OnControllerColliderHit(ControllerColliderHit hit)
         {

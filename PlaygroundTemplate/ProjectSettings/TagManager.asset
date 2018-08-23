@@ -10,6 +10,7 @@ TagManager:
   - Attached
   - Environment
   - AttachBase
+  - PlayerAvatar
   layers:
   - Default
   - TransparentFX
