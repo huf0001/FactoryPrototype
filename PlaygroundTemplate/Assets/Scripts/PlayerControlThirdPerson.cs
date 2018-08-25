@@ -5,12 +5,16 @@ public class PlayerControlThirdPerson : MonoBehaviour
 
 {
     public Rigidbody player;
-    public Transform playerCam, playerTransform, centerPoint;
+    public Transform playerCam, playerTransform;
+    public Rigidbody rightHand;
+    public float grabSpeed = 2f;
+    public Transform playerHead;
 
     public float moveSpeed = 2f;
     private Vector3 movement;
     private Vector3 lookInputs;
     private Vector3 movePos;
+    private bool grabR = false;
 
     private float mouseX, mouseY, moveFrontBack, moveLeftRight;
 
@@ -24,17 +28,6 @@ public class PlayerControlThirdPerson : MonoBehaviour
     // Update is called once per frame
     void Update ()
     {
-        //allows player to rotate camera up and down with right click
-        if (Input.GetMouseButton (1)) 
-        {
-            mouseX -= Input.GetAxis ("Mouse Y");
-        }
-        
-        //controls camera rotation constraints when using right click
-       // mouseX = Mathf.Clamp(mouseX, -39f, 60f);
-        //playerCam.LookAt(centerPoint);
-        //centerPoint.localRotation = Quaternion.Euler (mouseX, 0, 0);
-		
         //gathering movement input 
         moveFrontBack = Input.GetAxis ("Vertical"); 
         moveLeftRight = Input.GetAxis ("Horizontal");
@@ -48,17 +41,35 @@ public class PlayerControlThirdPerson : MonoBehaviour
         lookInputs.y += Input.GetAxis("Mouse X");
         lookInputs.x -= Input.GetAxis("Mouse Y");
         lookInputs.x = Mathf.Clamp (lookInputs.x, -20f, 20f);
+
+        //gathering hand input
+        if (Input.GetMouseButton(1))
+        {
+            grabR = true;
+        }
     }
 
     void FixedUpdate ()
     {
-        //updates player movement & rotation
+        //updates player movement & camera rotation
         player.velocity = movePos;
         Vector3 camRotation = new Vector3(lookInputs.x, lookInputs.y, 0);
         Quaternion cDeltaRotation = Quaternion.Euler(camRotation);
-        Vector3 newRot = new Vector3 (0, lookInputs.y, 0);
-        Quaternion deltaRotation = Quaternion.Euler (newRot);
-        //player.rotation = deltaRotation;
-        playerCam.rotation = cDeltaRotation;
+        //Vector3 newRot = new Vector3 (0, lookInputs.y, 0);
+        //Quaternion deltaRotation = Quaternion.Euler (newRot);
+        //player.rotation = deltaRotation; commented out because conflicts with camera rotation when active 
+        //playerCam.rotation = cDeltaRotation; commented out for testing
+        playerHead.rotation = cDeltaRotation;
+
+
+
+        //executes hand movement
+        //moves hands based on players head rotation 
+        //right hand
+        if (grabR) {
+            rightHand.AddForce(playerHead.forward * grabSpeed);
+            rightHand.velocity = Vector3.zero;
+            grabR = false;
+        }
     }
 }
