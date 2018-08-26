@@ -41,7 +41,7 @@ public class PlayerControlThirdPerson : MonoBehaviour
         //gathering look input
         lookInputs.y += Input.GetAxis("Mouse X");
         lookInputs.x -= Input.GetAxis("Mouse Y");
-        lookInputs.x = Mathf.Clamp (lookInputs.x, -20f, 20f);
+        lookInputs.x = Mathf.Clamp (lookInputs.x, -60f, 10f);
 
         //gathering hand input
         if (Input.GetMouseButton(1))
@@ -57,12 +57,12 @@ public class PlayerControlThirdPerson : MonoBehaviour
     {
         //updates player movement & camera rotation
         player.velocity = movePos;
-        Vector3 camRotation = new Vector3(lookInputs.x, lookInputs.y, 0);
+        Vector3 camRotation = new Vector3(lookInputs.x, lookInputs.y , 0);
         Quaternion cDeltaRotation = Quaternion.Euler(camRotation);
         Vector3 newRot = new Vector3 (0, lookInputs.y, 0);
         Quaternion deltaRotation = Quaternion.Euler (newRot);
         player.rotation = deltaRotation;  
-        //playerCam.rotation = cDeltaRotation;
+        playerCam.rotation = cDeltaRotation;
         playerHead.rotation = cDeltaRotation;
 
 
