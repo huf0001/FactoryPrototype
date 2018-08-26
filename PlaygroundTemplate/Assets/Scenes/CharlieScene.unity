@@ -154,6 +154,11 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!54 &225296110 stripped
+Rigidbody:
+  m_CorrespondingSourceObject: {fileID: 54891866618813808, guid: 95554f38aa44f9a4ca978dd8d6d609f7,
+    type: 2}
+  m_PrefabInternal: {fileID: 1314745351}
 --- !u!1 &276652806
 GameObject:
   m_ObjectHideFlags: 0
@@ -351,7 +356,7 @@ Prefab:
     - target: {fileID: 114775628911213990, guid: 95554f38aa44f9a4ca978dd8d6d609f7,
         type: 2}
       propertyPath: grabSpeed
-      value: 10
+      value: 150
       objectReference: {fileID: 0}
     - target: {fileID: 59664777997725198, guid: 95554f38aa44f9a4ca978dd8d6d609f7,
         type: 2}
@@ -470,6 +475,39 @@ Prefab:
       propertyPath: playerHead
       value: 
       objectReference: {fileID: 1904972035}
+    - target: {fileID: 4063680705810054, guid: 95554f38aa44f9a4ca978dd8d6d609f7, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 0.889
+      objectReference: {fileID: 0}
+    - target: {fileID: 4063680705810054, guid: 95554f38aa44f9a4ca978dd8d6d609f7, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: -4.296
+      objectReference: {fileID: 0}
+    - target: {fileID: 59341587931454860, guid: 95554f38aa44f9a4ca978dd8d6d609f7,
+        type: 2}
+      propertyPath: m_UseLimits
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 54301525995136978, guid: 95554f38aa44f9a4ca978dd8d6d609f7,
+        type: 2}
+      propertyPath: m_Mass
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 54004175537671030, guid: 95554f38aa44f9a4ca978dd8d6d609f7,
+        type: 2}
+      propertyPath: m_Mass
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 54728976649584048, guid: 95554f38aa44f9a4ca978dd8d6d609f7,
+        type: 2}
+      propertyPath: m_Mass
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114775628911213990, guid: 95554f38aa44f9a4ca978dd8d6d609f7,
+        type: 2}
+      propertyPath: leftHand
+      value: 
+      objectReference: {fileID: 225296110}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 95554f38aa44f9a4ca978dd8d6d609f7, type: 2}
   m_IsPrefabAsset: 0
