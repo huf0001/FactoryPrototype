@@ -7,11 +7,11 @@ public class AttachScript : MonoBehaviour
     Dictionary<Transform, GameObject> AttachedItems;
     List<Transform> AvailableGuides;
 
-    public string attachableIdentifier;
-    public string attachBaseIdentifier;
+    private Identifier compatibleAttachableObjectID;
 
     private void Start()
     {
+        compatibleAttachableObjectID = Identifier.Attachable;
         AttachedItems = new Dictionary<Transform, GameObject>();
         AvailableGuides = new List<Transform>();
 
@@ -22,7 +22,7 @@ public class AttachScript : MonoBehaviour
 
         if (this.gameObject.GetComponent<IdentifiableScript>() != null)
         {
-            this.gameObject.GetComponent<IdentifiableScript>().AddIdentifier(attachBaseIdentifier);
+            this.gameObject.GetComponent<IdentifiableScript>().AddIdentifier(Identifier.AttachBase);
         }
         else
         {
@@ -56,7 +56,7 @@ public class AttachScript : MonoBehaviour
     {
         bool result = true;
 
-        if ((AvailableGuides.Count == 0)||(!temp.HasIdentifier(attachableIdentifier))||(!temp.HasIdentifier("Dropped")))
+        if ((AvailableGuides.Count == 0)||(!temp.HasIdentifier(compatibleAttachableObjectID))||(!temp.HasIdentifier(Identifier.Dropped)))
         {
             result = false;
         }
@@ -71,9 +71,9 @@ public class AttachScript : MonoBehaviour
         attaching.GetComponent<Rigidbody>().useGravity = false;
         attaching.GetComponent<Rigidbody>().isKinematic = true;
         attaching.transform.parent = this.gameObject.transform;
-        attaching.GetComponent<IdentifiableScript>().AddIdentifier("Attached");
-        attaching.GetComponent<IdentifiableScript>().RemoveIdentifier("Attachable");
-        attaching.GetComponent<IdentifiableScript>().RemoveIdentifier("Dropped");
+        attaching.GetComponent<IdentifiableScript>().AddIdentifier(Identifier.Attached);
+        attaching.GetComponent<IdentifiableScript>().RemoveIdentifier(Identifier.Attachable);
+        attaching.GetComponent<IdentifiableScript>().RemoveIdentifier(Identifier.Dropped);
         attaching.GetComponent<AttachableScript>().AttachedTo = this;
     }
 
@@ -106,9 +106,9 @@ public class AttachScript : MonoBehaviour
         reAttaching.GetComponent<Rigidbody>().useGravity = false;
         reAttaching.GetComponent<Rigidbody>().isKinematic = true;
         reAttaching.transform.parent = this.gameObject.transform;
-        reAttaching.GetComponent<IdentifiableScript>().AddIdentifier("Attached");
-        reAttaching.GetComponent<IdentifiableScript>().RemoveIdentifier("Attachable");
-        reAttaching.GetComponent<IdentifiableScript>().RemoveIdentifier("Dropped");
+        reAttaching.GetComponent<IdentifiableScript>().AddIdentifier(Identifier.Attached);
+        reAttaching.GetComponent<IdentifiableScript>().RemoveIdentifier(Identifier.Attachable);
+        reAttaching.GetComponent<IdentifiableScript>().RemoveIdentifier(Identifier.Dropped);
         reAttaching.GetComponent<AttachableScript>().AttachedTo = this;
 
         foreach (KeyValuePair<Transform, GameObject> p in AttachedItems)

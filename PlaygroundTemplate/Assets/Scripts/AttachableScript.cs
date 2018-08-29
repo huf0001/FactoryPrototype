@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AttachableScript : MoveObjectScript
+public class AttachableScript : MovableScript
 {
-    public string attachableIdentifier;
+    private Identifier compatibleAttachBaseID;
     private AttachScript attachedTo;
 
     // Use this for initialization
@@ -16,7 +16,8 @@ public class AttachableScript : MoveObjectScript
     protected override void HandleStart()
     {
         base.HandleStart();
-        AddIdentifier("Attachable");
+        AddIdentifier(Identifier.Attachable);
+        compatibleAttachBaseID = Identifier.AttachBase;
     }
 
     //If this is attached to something, this passes the colliding object to the attached base object
@@ -28,24 +29,24 @@ public class AttachableScript : MoveObjectScript
 
     protected override void HandleOnTriggerStay(Collider other)
     {
-        if (HasIdentifier("Dropped"))
+        if (HasIdentifier(Identifier.Dropped))
         {
-            HandleDropped(other.gameObject);
+            HandleDropIDChange(other.gameObject);
         }
-        else if (HasIdentifier("Attached"))
+        else if (HasIdentifier(Identifier.Attached))
         {
             HandleCollisionWhileAttached(other);
         }
     }
 
-    protected virtual void HandleDropped(GameObject other)
+    protected virtual void HandleDropIDChange(GameObject other)
     {
         IdentifiableScript identifiable = other.GetComponent<IdentifiableScript>();
         bool fallenOnAttachBase = false;
 
         if (identifiable != null)
         {
-            if ((identifiable.HasIdentifier(attachableIdentifier)) || (identifiable.HasIdentifier("Attached")))
+            if ((identifiable.HasIdentifier(compatibleAttachBaseID)) || (identifiable.HasIdentifier(Identifier.Attached)))
             {
                 fallenOnAttachBase = true;
             }
@@ -53,7 +54,7 @@ public class AttachableScript : MoveObjectScript
 
         if (!fallenOnAttachBase)
         {
-            RemoveIdentifier("Dropped");
+            RemoveIdentifier(Identifier.Dropped);
         }
     }
 
@@ -61,7 +62,7 @@ public class AttachableScript : MoveObjectScript
     {
         if (other.gameObject.GetComponent<IdentifiableScript>() != null)
         {
-            if (other.gameObject.GetComponent<IdentifiableScript>().HasIdentifier("Dropped"))
+            if (other.gameObject.GetComponent<IdentifiableScript>().HasIdentifier(Identifier.Dropped))
             {
                 try
                 {
@@ -81,15 +82,15 @@ public class AttachableScript : MoveObjectScript
         }
     }
 
-    public override void HandleOnMouseDown()
+    public override void HandlePickUp(Hand h)
     {
-        if (HasIdentifier("Attached"))
+        if (HasIdentifier(Identifier.Attached))
         {
             //pass to the object this one is attached to
             try
             {
                 //attachedTo.CheckCollisionTrigger(other);
-                transform.parent.GetComponent<MoveObjectScript>().HandleOnMouseDown();
+                transform.parent.GetComponent<MovableScript>().HandlePickUp(h);
             }
 
             catch
@@ -99,30 +100,30 @@ public class AttachableScript : MoveObjectScript
                 //so the use of ReAttach() "re-tightens" the attachment so that it isn't "loose"
 
                 AttachedTo.ReAttach(this.gameObject);
-                AttachedTo.gameObject.GetComponent<MoveObjectScript>().HandleOnMouseDown();
+                AttachedTo.gameObject.GetComponent<MovableScript>().HandlePickUp(h);
             }
         }
         else
         {
-            base.HandleOnMouseDown();
+            base.HandlePickUp(h);
         }
     }
 
-    public override void HandleOnMouseUp()
+    public override void HandleDrop(Hand h)
     {
-        if (HasIdentifier("Attached"))
+        if (HasIdentifier(Identifier.Attached))
         {
             Body.useGravity = true;
             Body.isKinematic = false;
             transform.parent = AttachedTo.GetGuide(this.gameObject).transform;
             transform.position = AttachedTo.GetGuide(this.gameObject).transform.position;
-            RemoveIdentifier("PlayerMoving");
-            AttachedTo.gameObject.GetComponent<MoveObjectScript>().HandleOnMouseDown();
-            AttachedTo.gameObject.GetComponent<MoveObjectScript>().HandleOnMouseUp();
+            RemoveIdentifier(Identifier.PlayerMoving);
+            AttachedTo.gameObject.GetComponent<MovableScript>().HandlePickUp(h);
+            AttachedTo.gameObject.GetComponent<MovableScript>().HandleDrop(h);
         }
         else
         {
-            base.HandleOnMouseUp();
+            base.HandleDrop(h);
         }
     }
 
