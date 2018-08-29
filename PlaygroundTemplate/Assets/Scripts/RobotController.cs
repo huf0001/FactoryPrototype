@@ -4,25 +4,28 @@ using UnityEngine;
 
 public class RobotController : MonoBehaviour {
 
-    private Animator anim;
-    private Rigidbody player;
+
+    //robot controller script
+    //controls leg/body movment and animation with character controllor
+    //arms controlled by physics and rigidbodies 
+    public Animator anim;
+    public CharacterController player;
+    public float moveSpeed = 10f;
+    public float rotationSpeed = 75f;
+
+    private float moveDirection;
+    private float rotationDirection;
+    private Vector3 lookInputs;
 
     public Rigidbody rightHand, leftHand;
-    public float grabSpeed = 5f;
-    public float sprintSpeed = 0.5f;
+    public float grabSpeed = 100f;
     public Transform playerHead;
-    public Transform playerCam;
-
-    private float moveFrontBack, moveLeftRight;
-    public float moveSpeed = 2f;
-    private Vector3 lookInputs, moveInputs, movePos;
     private bool grabR = false;
     private bool grabL = false;
 
+
     // Use this for initialization
     void Start () {
-        anim = GetComponent<Animator>();
-        player = GetComponent<Rigidbody>();
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -30,18 +33,19 @@ public class RobotController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        moveInputs.z = Input.GetAxis("Vertical");
-        moveInputs.x = Input.GetAxis("Horizontal");
+        //move and rotate player
+        moveDirection = Input.GetAxis("Vertical") * moveSpeed;
+        rotationDirection = Input.GetAxis("Horizontal") * rotationSpeed;
+        moveDirection *= Time.deltaTime;
+        rotationDirection *= Time.deltaTime;
 
-        lookInputs.y += Input.GetAxis("Mouse X");
-        lookInputs.x -= Input.GetAxis("Mouse Y");
-        lookInputs.x = Mathf.Clamp(lookInputs.x, -60f, 10f);
+        player.transform.Translate(0, 0, moveDirection);
+        player.transform.Rotate(0, rotationDirection, 0);
 
-        //sprinting
-        //if (Input.GetKey(KeyCode.LeftShift)) { moveSpeed *= sprintSpeed; }
-        //controls movement settings/dir
-        Vector3 newDir = playerCam.TransformDirection(moveInputs);
-        movePos = new Vector3(newDir.x * moveSpeed, 0, newDir.z * moveSpeed);
+        //controls animation
+        if (moveDirection != 0)
+            { anim.SetBool("IsWalking", true); }
+        else { anim.SetBool("IsWalking", false); }
 
         //gathering hand input
         if (Input.GetMouseButton(1))
@@ -52,21 +56,20 @@ public class RobotController : MonoBehaviour {
         {
             grabL = true;
         }
+
+        //gathering look input 
+        lookInputs.y += Input.GetAxis("Mouse X");
+        lookInputs.x -= Input.GetAxis("Mouse Y");
+        lookInputs.x = Mathf.Clamp(lookInputs.x, -60f, 9f);
+        lookInputs.y = Mathf.Clamp(lookInputs.y, -60f, 60f);
     }
 
     void FixedUpdate()
     {
-        player.velocity = movePos;
-
-        //rotating players head all round
+        //rotating players head all round to direct hands
         Vector3 headRot = new Vector3(lookInputs.x, lookInputs.y, 0);
         Quaternion hDeltaRotation = Quaternion.Euler(headRot);
         playerHead.rotation = hDeltaRotation;
-        
-        //rotating players body side to side
-        Vector3 bodyRot = new Vector3(0, lookInputs.y, 0);
-        Quaternion pDeltaRotation = Quaternion.Euler(bodyRot);
-        //player.rotation = pDeltaRotation;
 
         //executes hand movement
         //moves hands based on players head rotation 
@@ -85,6 +88,5 @@ public class RobotController : MonoBehaviour {
             grabL = false;
             leftHand.velocity = Vector3.zero;
         }
-
     }
 }
