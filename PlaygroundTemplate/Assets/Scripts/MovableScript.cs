@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MoveObjectScript : IdentifiableScript
+public class MovableScript : IdentifiableScript
 {
     [SerializeField] private GameObject tempLeftParent;
     [SerializeField] private GameObject tempRightParent;
     private Transform leftGuide;
     private Transform rightGuide;
+    private PickUpScript hands;
     private Rigidbody body;
 
     // Use this for initialization
@@ -22,36 +23,47 @@ public class MoveObjectScript : IdentifiableScript
         body.useGravity = true;
         leftGuide = tempLeftParent.transform;
         rightGuide = tempRightParent.transform;
+        hands = tempLeftParent.GetComponentInParent<PickUpScript>();
     }
 
-    void OnMouseDown()
-    {
-        HandleOnMouseDown();
-    }
-
-    public virtual void HandleOnMouseDown()
+    public virtual void HandlePickUp(Hand h)
     {
         body.useGravity = false;
         body.isKinematic = true;
-        transform.position = leftGuide.transform.position;
-        transform.rotation = leftGuide.transform.rotation;
-        transform.parent = tempLeftParent.transform;
-        AddIdentifier("PlayerMoving");
+
+        if (h == Hand.Left)
+        {
+            transform.position = leftGuide.transform.position;
+            transform.rotation = leftGuide.transform.rotation;
+            transform.parent = tempLeftParent.transform;
+        }
+        else
+        {
+            transform.position = rightGuide.transform.position;
+            transform.rotation = rightGuide.transform.rotation;
+            transform.parent = tempRightParent.transform;
+        }
+
+        AddIdentifier(Identifier.PlayerMoving);
     }
 
-    void OnMouseUp()
-    {
-        HandleOnMouseUp();
-    }
-
-    public virtual void HandleOnMouseUp()
+    public virtual void HandleDrop(Hand h)
     {
         body.useGravity = true;
         body.isKinematic = false;
         transform.parent = null;
-        transform.position = leftGuide.transform.position;
-        RemoveIdentifier("PlayerMoving");
-        AddIdentifier("Dropped");
+
+        if (h == Hand.Left)
+        {
+            transform.position = leftGuide.transform.position;
+        }
+        else
+        {
+            transform.position = rightGuide.transform.position;
+        }
+
+        RemoveIdentifier(Identifier.PlayerMoving);
+        AddIdentifier(Identifier.Dropped);
     }
 
     void OnTriggerStay(Collider other)
@@ -61,9 +73,9 @@ public class MoveObjectScript : IdentifiableScript
 
     protected virtual void HandleOnTriggerStay(Collider other)
     {
-        if (HasIdentifier("Dropped"))
+        if (HasIdentifier(Identifier.Dropped))
         {
-            RemoveIdentifier("Dropped");
+            RemoveIdentifier(Identifier.Dropped);
         }
     }
 

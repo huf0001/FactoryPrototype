@@ -22,11 +22,11 @@ public class ConveyerBeltScript : MonoBehaviour
     private bool CheckPlayerMoving(GameObject other)
     {
         bool result = false;
-        MoveObjectScript movable = other.gameObject.GetComponent<MoveObjectScript>();
+        MovableScript movable = other.gameObject.GetComponent<MovableScript>();
 
         if (movable != null)
         {
-            if ((movable.HasIdentifier("PlayerMoving"))||(movable.HasIdentifier("Attached")))
+            if ((movable.HasIdentifier(Identifier.PlayerMoving))||(movable.HasIdentifier(Identifier.Attached)))
             {
                 result = true;
             }     

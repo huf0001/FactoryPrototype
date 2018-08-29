@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class IdentifiableScript : MonoBehaviour
 {
-    private List<string> identifiers = new List<string>();
+    private List<Identifier> identifiers = new List<Identifier>();
 
-    public bool HasIdentifier(string id)
+    public bool HasIdentifier(Identifier id)
     {
         bool result = false;
 
@@ -18,7 +18,7 @@ public class IdentifiableScript : MonoBehaviour
         return result;
     }
 
-    public void AddIdentifier(string id)
+    public void AddIdentifier(Identifier id)
     {
         if (!identifiers.Contains(id))
         {
@@ -26,7 +26,7 @@ public class IdentifiableScript : MonoBehaviour
         }
     }
 
-    public void RemoveIdentifier(string id)
+    public void RemoveIdentifier(Identifier id)
     {
         if (identifiers.Contains(id))
         {
