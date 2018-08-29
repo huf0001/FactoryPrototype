@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class MoveObjectScript : IdentifiableScript
 {
-    public GameObject tempParent;
-    public Transform guide;
+    [SerializeField] private GameObject tempLeftParent;
+    [SerializeField] private GameObject tempRightParent;
+    private Transform leftGuide;
+    private Transform rightGuide;
     private Rigidbody body;
 
     // Use this for initialization
@@ -18,6 +20,8 @@ public class MoveObjectScript : IdentifiableScript
     {
         body = this.gameObject.GetComponent<Rigidbody>();
         body.useGravity = true;
+        leftGuide = tempLeftParent.transform;
+        rightGuide = tempRightParent.transform;
     }
 
     void OnMouseDown()
@@ -29,9 +33,9 @@ public class MoveObjectScript : IdentifiableScript
     {
         body.useGravity = false;
         body.isKinematic = true;
-        transform.position = guide.transform.position;
-        transform.rotation = guide.transform.rotation;
-        transform.parent = tempParent.transform;
+        transform.position = leftGuide.transform.position;
+        transform.rotation = leftGuide.transform.rotation;
+        transform.parent = tempLeftParent.transform;
         AddIdentifier("PlayerMoving");
     }
 
@@ -45,7 +49,7 @@ public class MoveObjectScript : IdentifiableScript
         body.useGravity = true;
         body.isKinematic = false;
         transform.parent = null;
-        transform.position = guide.transform.position;
+        transform.position = leftGuide.transform.position;
         RemoveIdentifier("PlayerMoving");
         AddIdentifier("Dropped");
     }
