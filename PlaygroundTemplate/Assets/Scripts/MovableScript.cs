@@ -45,6 +45,15 @@ public class MovableScript : IdentifiableScript
         }
 
         AddIdentifier(Identifier.PlayerMoving);
+
+        if (HasIdentifier(Identifier.AttachBase))
+        {
+            this.gameObject.GetComponent<AttachScript>().LayerChange(2);
+        }
+        else
+        {
+            this.gameObject.layer = 2;
+        }
     }
 
     public virtual void HandleDrop(Hand h)
@@ -64,6 +73,15 @@ public class MovableScript : IdentifiableScript
 
         RemoveIdentifier(Identifier.PlayerMoving);
         AddIdentifier(Identifier.Dropped);
+
+        if (HasIdentifier(Identifier.AttachBase))
+        {
+            this.gameObject.GetComponent<AttachScript>().LayerChange(0);
+        }
+        else
+        {
+            this.gameObject.layer = 0;
+        }
     }
 
     void OnTriggerStay(Collider other)

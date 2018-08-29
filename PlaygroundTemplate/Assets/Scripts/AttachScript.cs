@@ -138,4 +138,26 @@ public class AttachScript : MonoBehaviour
 
         return null;
     }
+
+    public void LayerChange(int layer)
+    {
+        if (layer == 2)
+        {
+            this.gameObject.layer = 2;
+
+            foreach (KeyValuePair<Transform, GameObject> p in AttachedItems)
+            {
+                p.Value.layer = 2;
+            }
+        }
+        else
+        {
+            this.gameObject.layer = 0;
+
+            foreach (KeyValuePair<Transform, GameObject> p in AttachedItems)
+            {
+                p.Value.layer = 0;
+            }
+        }
+    }
 }
