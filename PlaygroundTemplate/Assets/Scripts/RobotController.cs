@@ -12,13 +12,14 @@ public class RobotController : MonoBehaviour {
     public CharacterController player;
     public float moveSpeed = 10f;
     public float rotationSpeed = 75f;
+    public Transform handTargetL, handTargetR;
 
     private float moveDirection;
     private float rotationDirection;
     private Vector3 lookInputs;
 
     public Rigidbody rightHand, leftHand;
-    public float grabSpeed = 100f;
+    public float grabSpeed = 150f;
     public Transform playerHead;
     private bool grabR = false;
     private bool grabL = false;
@@ -76,17 +77,20 @@ public class RobotController : MonoBehaviour {
         //right hand
         if (grabR)
         {
-            rightHand.AddForce(playerHead.forward * grabSpeed, ForceMode.Acceleration);
+            //feel free to test which arm force you think looks best 
+            //rightHand.transform.LookAt(handTargetR);
+            //rightHand.AddRelativeForce(Vector3.forward * grabSpeed, ForceMode.Force);
+            rightHand.AddForce(handTargetR.forward * grabSpeed, ForceMode.Acceleration);
             grabR = false;
-            rightHand.velocity = Vector3.zero;
         }
 
         //left hand
         if (grabL)
         {
-            leftHand.AddForce(playerHead.forward * grabSpeed, ForceMode.Acceleration);
+            leftHand.AddForce(handTargetL.forward * grabSpeed, ForceMode.Acceleration);
+            //leftHand.transform.LookAt(handTargetL);
+            //leftHand.AddRelativeForce(Vector3.forward * grabSpeed, ForceMode.Force);
             grabL = false;
-            leftHand.velocity = Vector3.zero;
         }
     }
 }
