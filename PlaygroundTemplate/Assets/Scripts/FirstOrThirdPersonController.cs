@@ -8,13 +8,13 @@ namespace UnityStandardAssets.Characters.FirstPerson
 {
     [RequireComponent(typeof (CharacterController))]
     [RequireComponent(typeof (AudioSource))]
-    public class FirstPersonController : MonoBehaviour
+    public class FirstOrThirdPersonController : MonoBehaviour
     {
         [SerializeField] private bool thirdPerson = false;
-        [SerializeField] private bool verticalLook = true;
+        // [SerializeField] private bool verticalLook = true;
         [SerializeField] private Camera firstPersonCamera;
         [SerializeField] private Camera thirdPersonCamera;
-        //[SerializeField] private GameObject playerAvatar;
+        // [SerializeField] private GameObject playerAvatar;
 
         [SerializeField] private bool m_IsWalking;
         [SerializeField] private float m_WalkSpeed = 5;
@@ -34,8 +34,12 @@ namespace UnityStandardAssets.Characters.FirstPerson
         [SerializeField] private AudioClip m_JumpSound;           // the sound played when character leaves the ground.
         [SerializeField] private AudioClip m_LandSound;           // the sound played when character touches back on ground.
 
+        private Vector3 OriginalFPCameraPosition;
+        private Vector3 OriginalTPCameraPosition;
+
         private Camera m_Camera;
         private bool m_Jump;
+        private bool m_ChangeCamera;
         private float m_YRotation;
         private Vector2 m_Input;
         private Vector3 m_MoveDir = Vector3.zero;
@@ -52,19 +56,23 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private void Start()
         {
             m_CharacterController = GetComponent<CharacterController>();
-
+            OriginalFPCameraPosition = firstPersonCamera.transform.localPosition;
+            OriginalTPCameraPosition = thirdPersonCamera.transform.localPosition;
+            
             if (!thirdPerson)
             {
                 m_Camera = firstPersonCamera;
+                m_OriginalCameraPosition = OriginalFPCameraPosition;
                 thirdPersonCamera.enabled = false;
             }
             else
             {
                 m_Camera = thirdPersonCamera;
+                m_OriginalCameraPosition = OriginalTPCameraPosition;
                 firstPersonCamera.enabled = false;
             }
 
-            m_OriginalCameraPosition = m_Camera.transform.localPosition;
+            // m_OriginalCameraPosition = m_Camera.transform.localPosition;
             m_FovKick.Setup(m_Camera);
             m_HeadBob.Setup(m_Camera, m_StepInterval);
             m_StepCycle = 0f;
@@ -73,10 +81,10 @@ namespace UnityStandardAssets.Characters.FirstPerson
             m_AudioSource = GetComponent<AudioSource>();
 			m_MouseLook.Init(transform , m_Camera.transform);
 
-            if (!verticalLook)
+            /*if (!verticalLook)
             {
                 m_MouseLook.YSensitivity = 0;
-            }
+            }*/
         }
 
         // Update is called once per frame
@@ -87,6 +95,11 @@ namespace UnityStandardAssets.Characters.FirstPerson
             if (!m_Jump)
             {
                 m_Jump = CrossPlatformInputManager.GetButtonDown("Jump");
+            }
+
+            if (!m_ChangeCamera)
+            {
+                m_ChangeCamera = CrossPlatformInputManager.GetButtonDown("ChangeCamera");
             }
 
             if (!m_PreviouslyGrounded && m_CharacterController.isGrounded)
@@ -147,6 +160,12 @@ namespace UnityStandardAssets.Characters.FirstPerson
             m_CollisionFlags = m_CharacterController.Move(m_MoveDir*Time.fixedDeltaTime);
 
             ProgressStepCycle(speed);
+
+            if (m_ChangeCamera)
+            {
+                ChangeCamera();
+                m_ChangeCamera = false;
+            }
 
             if (!thirdPerson)
             {
@@ -258,7 +277,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         private void RotateView()
         {
-            m_MouseLook.LookRotation (transform, m_Camera.transform);
+            m_MouseLook.LookRotation (transform, firstPersonCamera.transform /*m_Camera.transform*/);
         }
 
         private void OnControllerColliderHit(ControllerColliderHit hit)
@@ -275,6 +294,28 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 return;
             }
             body.AddForceAtPosition(m_CharacterController.velocity*0.1f, hit.point, ForceMode.Impulse);
+        }
+
+        private void ChangeCamera()
+        {
+            firstPersonCamera.enabled = !firstPersonCamera.enabled;
+            thirdPersonCamera.enabled = !thirdPersonCamera.enabled;
+
+            if (thirdPerson)
+            {
+                m_Camera = firstPersonCamera;
+                m_OriginalCameraPosition = OriginalFPCameraPosition;
+            }
+            else
+            {
+                m_Camera = thirdPersonCamera;
+                m_OriginalCameraPosition = OriginalTPCameraPosition;
+            }
+
+            thirdPerson = !thirdPerson;
+            m_FovKick.Setup(m_Camera);
+            m_HeadBob.Setup(m_Camera, m_StepInterval);
+            m_MouseLook.Init(transform, m_Camera.transform);
         }
     }
 }

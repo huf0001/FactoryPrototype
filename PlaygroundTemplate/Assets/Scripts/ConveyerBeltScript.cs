@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ConveyerBeltScript : MonoBehaviour
 {
-    public GameObject belt;
+    // public GameObject belt;
     public Transform endpoint;
     public float speed;
 

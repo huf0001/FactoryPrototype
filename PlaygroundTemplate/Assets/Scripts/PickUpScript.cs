@@ -4,21 +4,24 @@ using UnityEngine;
 
 public class PickUpScript: MonoBehaviour
 {
-    [SerializeField] private GameObject leftHand;
-    [SerializeField] private GameObject rightHand;
+    [SerializeField] private GameObject leftHandGuide;
+    [SerializeField] private GameObject rightHandGuide;
+    // [SerializeField] private GameObject leftHandObject;
+    // [SerializeField] private GameObject rightHandObject;
     [SerializeField] private Camera myCamera;
+    // [SerializeField] private float speed;
 
     private IdentifiableScript leftIDs;
     private IdentifiableScript rightIDs;
 
-    private GameObject movingInLeft;
-    private GameObject movingInRight;
+    private GameObject movingInLeft = null;
+    private GameObject movingInRight = null;
 
     // Use this for initialization
 	void Start ()
     {
-        leftIDs = leftHand.GetComponent<IdentifiableScript>();
-        rightIDs = rightHand.GetComponent<IdentifiableScript>();
+        leftIDs = leftHandGuide.GetComponent<IdentifiableScript>();
+        rightIDs = rightHandGuide.GetComponent<IdentifiableScript>();
 
         leftIDs.AddIdentifier(Identifier.HandEmpty);
         rightIDs.AddIdentifier(Identifier.HandEmpty);
@@ -87,6 +90,16 @@ public class PickUpScript: MonoBehaviour
         {
             HandleRightClick();
         }
+
+        /*if (movingInLeft != null)
+        {
+            GuideHand(movingInLeft, leftHandObject);
+        }
+
+        if (movingInRight != null)
+        {
+            GuideHand(movingInRight, rightHandObject);
+        }*/
     }
 
     private void HandleLeftClick()
@@ -194,4 +207,9 @@ public class PickUpScript: MonoBehaviour
             }
         }
     }
+
+    /*private void GuideHand(GameObject guide, GameObject hand)
+    {
+        hand.transform.position = Vector3.MoveTowards(hand.transform.position, guide.transform.position, speed * Time.deltaTime);
+    }*/
 }
