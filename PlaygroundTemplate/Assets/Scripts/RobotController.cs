@@ -24,6 +24,9 @@ public class RobotController : MonoBehaviour {
     private bool grabR = false;
     private bool grabL = false;
 
+    private float jumpVelocity;
+    private float gravity = 14f;
+    public float jumpForce = 10f;
 
     // Use this for initialization
     void Start () {
@@ -42,6 +45,21 @@ public class RobotController : MonoBehaviour {
 
         player.transform.Translate(0, 0, moveDirection);
         player.transform.Rotate(0, rotationDirection, 0);
+
+        //make player jump
+        if (player.isGrounded)
+        {
+            jumpVelocity = -gravity * Time.deltaTime;
+            if (Input.GetButtonDown("Jump"))
+            {
+                jumpVelocity = jumpForce;
+            }
+        }
+        else { jumpVelocity -= gravity * Time.deltaTime; }
+
+        Vector3 move = new Vector3(rotationDirection, jumpVelocity, moveDirection);
+        move = transform.TransformDirection(move);
+        player.Move(move * Time.deltaTime);
 
         //controls animation
         if (moveDirection != 0)
@@ -77,20 +95,17 @@ public class RobotController : MonoBehaviour {
         //right hand
         if (grabR)
         {
-            //feel free to test which arm force you think looks best 
-            //rightHand.transform.LookAt(handTargetR);
-            //rightHand.AddRelativeForce(Vector3.forward * grabSpeed, ForceMode.Force);
             rightHand.AddForce(handTargetR.forward * grabSpeed, ForceMode.Acceleration);
             grabR = false;
+            rightHand.velocity = Vector3.zero;
         }
 
         //left hand
         if (grabL)
         {
             leftHand.AddForce(handTargetL.forward * grabSpeed, ForceMode.Acceleration);
-            //leftHand.transform.LookAt(handTargetL);
-            //leftHand.AddRelativeForce(Vector3.forward * grabSpeed, ForceMode.Force);
             grabL = false;
+            leftHand.velocity = Vector3.zero;
         }
     }
 }

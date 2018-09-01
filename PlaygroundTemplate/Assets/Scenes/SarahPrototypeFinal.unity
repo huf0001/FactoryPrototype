@@ -238,6 +238,22 @@ Prefab:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 100408, guid: d5cfb944109a84a6095d2df24c67a390, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
+      objectReference: {fileID: 0}
+    - target: {fileID: 100134, guid: d5cfb944109a84a6095d2df24c67a390, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
+      objectReference: {fileID: 0}
+    - target: {fileID: 100144, guid: d5cfb944109a84a6095d2df24c67a390, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
+      objectReference: {fileID: 0}
+    - target: {fileID: 100140, guid: d5cfb944109a84a6095d2df24c67a390, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d5cfb944109a84a6095d2df24c67a390, type: 3}
   m_IsPrefabAsset: 0
@@ -298,5 +314,5 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.01, y: 0.0018997466, z: 0.01}
-  m_Center: {x: 0, y: -0.0009498733, z: 0}
+  m_Size: {x: 0.009999999, y: 0.0018997465, z: 0.009999999}
+  m_Center: {x: 0, y: -0.00094987336, z: 0}

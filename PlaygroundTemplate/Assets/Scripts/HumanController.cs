@@ -75,8 +75,7 @@ public class HumanController : MonoBehaviour
         //gathering look input 
         lookInputs.y += Input.GetAxis("Mouse X");
         lookInputs.x -= Input.GetAxis("Mouse Y");
-       // lookInputs.x = Mathf.Clamp(lookInputs.x, -60f, 9f);
-        lookInputs.y = Mathf.Clamp(lookInputs.y, -60f, 60f);
+        lookInputs.x = Mathf.Clamp(lookInputs.x, -60f, 9f);
     }
 
     void FixedUpdate()
@@ -92,7 +91,7 @@ public class HumanController : MonoBehaviour
         //right hand
         if (grabR)
         {
-            rightHand.AddForce(handTargetL.forward * grabSpeed, ForceMode.Acceleration);
+            rightHand.AddForce(handTargetR.forward * grabSpeed, ForceMode.Acceleration);
             grabR = false;
             rightHand.velocity = Vector3.zero;
         }
