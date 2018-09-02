@@ -4394,6 +4394,7 @@ MonoBehaviour:
   leftHand: {fileID: 54366615344225668}
   grabSpeed: 100
   playerHead: {fileID: 4132429335001474}
+  jumpForce: 10
 --- !u!135 &135121337611312436
 SphereCollider:
   m_ObjectHideFlags: 1
