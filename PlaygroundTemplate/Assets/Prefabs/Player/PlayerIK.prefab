@@ -966,7 +966,7 @@ GameObject:
   - component: {fileID: 114298141595441132}
   - component: {fileID: 143281472419271206}
   m_Layer: 0
-  m_Name: RobotPlayer
+  m_Name: PlayerIK
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
