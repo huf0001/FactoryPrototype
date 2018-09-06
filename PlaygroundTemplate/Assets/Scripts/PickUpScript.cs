@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityStandardAssets.CrossPlatformInput;
 
 public class PickUpScript: MonoBehaviour
 {
@@ -16,6 +17,9 @@ public class PickUpScript: MonoBehaviour
 
     private GameObject movingInLeft = null;
     private GameObject movingInRight = null;
+
+    private bool leftHandPickUp = false;
+    private bool rightHandPickUp = false;
 
     // Use this for initialization
 	void Start ()
@@ -81,14 +85,52 @@ public class PickUpScript: MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        /*RotateView();
+        // the jump state needs to read here to make sure it is not missed
+        if (!m_Jump)
         {
-            HandleLeftClick();
+            m_Jump = CrossPlatformInputManager.GetButtonDown("Jump");
         }
 
-        if (Input.GetMouseButtonDown(1))
+        if (!m_ChangeCamera)
         {
-            HandleRightClick();
+            m_ChangeCamera = CrossPlatformInputManager.GetButtonDown("ChangeCamera");
+        }
+
+        if (!m_PreviouslyGrounded && m_CharacterController.isGrounded)
+        {
+            StartCoroutine(m_JumpBob.DoBobCycle());
+            PlayLandingSound();
+            m_MoveDir.y = 0f;
+            m_Jumping = false;
+        }
+        if (!m_CharacterController.isGrounded && !m_Jumping && m_PreviouslyGrounded)
+        {
+            m_MoveDir.y = 0f;
+        }
+
+        m_PreviouslyGrounded = m_CharacterController.isGrounded;*/
+
+        // Switch to reprogrammable inputs
+        if (leftHandPickUp)
+        {
+            HandleLeftHandPickUp();
+            leftHandPickUp = false;
+        }
+        else
+        {
+            CrossPlatformInputManager.GetButtonDown("LeftHandPickUp");
+        }
+
+        // Switch to reprogrammable inputs
+        if (rightHandPickUp)
+        {
+            HandleRightHandPickUp();
+            rightHandPickUp = false;
+        }
+        else
+        {
+            CrossPlatformInputManager.GetButtonDown("RightHandPickUp");
         }
 
         /*if (movingInLeft != null)
@@ -102,7 +144,7 @@ public class PickUpScript: MonoBehaviour
         }*/
     }
 
-    private void HandleLeftClick()
+    private void HandleLeftHandPickUp()
     {
         if (IsEmpty(Hand.Left))
         {
@@ -155,7 +197,7 @@ public class PickUpScript: MonoBehaviour
         }
     }
 
-    private void HandleRightClick()
+    private void HandleRightHandPickUp()
     {
         if (IsEmpty(Hand.Right))
         {
