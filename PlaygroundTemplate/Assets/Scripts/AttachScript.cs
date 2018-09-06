@@ -52,7 +52,7 @@ public class AttachScript : MonoBehaviour
 
     //Just checking that there's an available guide object for each new attached object, and that said object
     //is attachable in the first place
-    private bool CheckCanAttach(IdentifiableScript temp)
+    public bool CheckCanAttach(IdentifiableScript temp)
     {
         bool result = true;
 
@@ -65,7 +65,7 @@ public class AttachScript : MonoBehaviour
     }
 
     //Attaches attachable objects to this object
-    private void Attach(GameObject attaching)
+    public void Attach(GameObject attaching)
     {
         AssignAttaching(attaching);
         attaching.GetComponent<Rigidbody>().useGravity = false;
