@@ -1,0 +1,350 @@
+fileFormatVersion: 2
+guid: 2273a9f653145694387c4e529b1f5226
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: A_Circle
+    100002: A_Green_1
+    100004: A_Green_2
+    100006: A_Green_3
+    100008: A_Green_4
+    100010: A_Green_5
+    100012: A_Green_6
+    100014: A_Green_7
+    100016: A_Large_Circle
+    100018: A_Stem
+    100020: Antenna
+    100022: Base
+    100024: Body
+    100026: Body_Geo
+    100028: Button_1
+    100030: Button_3
+    100032: Button_Large
+    100034: Chest
+    100036: Chest_L_Shoulder_L_Shoulder
+    100038: Chest_R_Shoulder_R_Shoulder
+    100040: Control_Head
+    100042: Control_L_Foot
+    100044: Control_Main
+    100046: Control_R_Foot
+    100048: F
+    100050: Face
+    100052: Head
+    100054: Head 1
+    100056: Head_Geo
+    100058: ik_Left_Leg
+    100060: ik_Right_Leg
+    100062: ikHead
+    100064: Interface
+    100066: L_Elbow
+    100068: L_Eye
+    100070: L_Foot
+    100072: L_Foot1
+    100074: L_Forearm
+    100076: L_Hand
+    100078: L_Hip
+    100080: L_Iris
+    100082: L_Knee
+    100084: L_Shin1
+    100086: L_Shoulder
+    100088: L_Shoulder 1
+    100090: L_Thigh1
+    100092: Main_Transform
+    100094: Neck
+    100096: Neck 1
+    100098: pCylinder3
+    100100: Plus_01
+    100102: Plus_02
+    100104: R_Elbow
+    100106: R_Eye
+    100108: R_Foot
+    100110: R_Foot 1
+    100112: R_Forearm
+    100114: R_Hand
+    100116: R_Hip
+    100118: R_Iris
+    100120: R_Knee
+    100122: R_Shin
+    100124: R_Shoulder
+    100126: R_Shoulder 1
+    100128: R_Thigh
+    100130: //RootNode
+    100132: Tooth_1
+    100134: Tooth_2
+    100136: Tooth_3
+    100138: Tooth_4
+    100140: transform1
+    100142: transform2
+    100144: transform3
+    100146: transform4
+    400000: A_Circle
+    400002: A_Green_1
+    400004: A_Green_2
+    400006: A_Green_3
+    400008: A_Green_4
+    400010: A_Green_5
+    400012: A_Green_6
+    400014: A_Green_7
+    400016: A_Large_Circle
+    400018: A_Stem
+    400020: Antenna
+    400022: Base
+    400024: Body
+    400026: Body_Geo
+    400028: Button_1
+    400030: Button_3
+    400032: Button_Large
+    400034: Chest
+    400036: Chest_L_Shoulder_L_Shoulder
+    400038: Chest_R_Shoulder_R_Shoulder
+    400040: Control_Head
+    400042: Control_L_Foot
+    400044: Control_Main
+    400046: Control_R_Foot
+    400048: F
+    400050: Face
+    400052: Head
+    400054: Head 1
+    400056: Head_Geo
+    400058: ik_Left_Leg
+    400060: ik_Right_Leg
+    400062: ikHead
+    400064: Interface
+    400066: L_Elbow
+    400068: L_Eye
+    400070: L_Foot
+    400072: L_Foot1
+    400074: L_Forearm
+    400076: L_Hand
+    400078: L_Hip
+    400080: L_Iris
+    400082: L_Knee
+    400084: L_Shin1
+    400086: L_Shoulder
+    400088: L_Shoulder 1
+    400090: L_Thigh1
+    400092: Main_Transform
+    400094: Neck
+    400096: Neck 1
+    400098: pCylinder3
+    400100: Plus_01
+    400102: Plus_02
+    400104: R_Elbow
+    400106: R_Eye
+    400108: R_Foot
+    400110: R_Foot 1
+    400112: R_Forearm
+    400114: R_Hand
+    400116: R_Hip
+    400118: R_Iris
+    400120: R_Knee
+    400122: R_Shin
+    400124: R_Shoulder
+    400126: R_Shoulder 1
+    400128: R_Thigh
+    400130: //RootNode
+    400132: Tooth_1
+    400134: Tooth_2
+    400136: Tooth_3
+    400138: Tooth_4
+    400140: transform1
+    400142: transform2
+    400144: transform3
+    400146: transform4
+    2100000: B2
+    2100002: B3
+    2100004: B1
+    2100006: typeBlinn
+    2100008: G1
+    2300000: A_Circle
+    2300002: A_Green_1
+    2300004: A_Green_2
+    2300006: A_Green_3
+    2300008: A_Green_4
+    2300010: A_Green_5
+    2300012: A_Green_6
+    2300014: A_Green_7
+    2300016: A_Large_Circle
+    2300018: A_Stem
+    2300020: Body
+    2300022: Button_1
+    2300024: Button_3
+    2300026: Button_Large
+    2300028: F
+    2300030: Head 1
+    2300032: L_Eye
+    2300034: L_Foot1
+    2300036: L_Iris
+    2300038: L_Shin1
+    2300040: L_Thigh1
+    2300042: Neck 1
+    2300044: pCylinder3
+    2300046: Plus_01
+    2300048: Plus_02
+    2300050: R_Eye
+    2300052: R_Foot 1
+    2300054: R_Iris
+    2300056: R_Shin
+    2300058: R_Thigh
+    2300060: Tooth_1
+    2300062: Tooth_2
+    2300064: Tooth_3
+    2300066: Tooth_4
+    3300000: A_Circle
+    3300002: A_Green_1
+    3300004: A_Green_2
+    3300006: A_Green_3
+    3300008: A_Green_4
+    3300010: A_Green_5
+    3300012: A_Green_6
+    3300014: A_Green_7
+    3300016: A_Large_Circle
+    3300018: A_Stem
+    3300020: Body
+    3300022: Button_1
+    3300024: Button_3
+    3300026: Button_Large
+    3300028: F
+    3300030: Head 1
+    3300032: L_Eye
+    3300034: L_Foot1
+    3300036: L_Iris
+    3300038: L_Shin1
+    3300040: L_Thigh1
+    3300042: Neck 1
+    3300044: pCylinder3
+    3300046: Plus_01
+    3300048: Plus_02
+    3300050: R_Eye
+    3300052: R_Foot 1
+    3300054: R_Iris
+    3300056: R_Shin
+    3300058: R_Thigh
+    3300060: Tooth_1
+    3300062: Tooth_2
+    3300064: Tooth_3
+    3300066: Tooth_4
+    4300000: L_Thigh1
+    4300002: L_Shin1
+    4300004: L_Foot1
+    4300006: R_Thigh
+    4300008: R_Shin
+    4300010: R_Foot
+    4300012: Body
+    4300014: Plus_02
+    4300016: Plus_01
+    4300018: Button_3
+    4300020: pCylinder3
+    4300022: Button_1
+    4300024: F
+    4300026: Button_Large
+    4300028: R_Eye
+    4300030: L_Eye
+    4300032: L_Iris
+    4300034: R_Iris
+    4300036: Tooth_1
+    4300038: Tooth_2
+    4300040: Tooth_3
+    4300042: Tooth_4
+    4300044: A_Circle
+    4300046: A_Stem
+    4300048: A_Large_Circle
+    4300050: A_Green_1
+    4300052: A_Green_2
+    4300054: A_Green_3
+    4300056: A_Green_4
+    4300058: A_Green_5
+    4300060: A_Green_6
+    4300062: A_Green_7
+    4300064: Neck
+    4300066: Head
+    4300068: Chest_R_Shoulder_R_Shoulder
+    4300070: Chest_L_Shoulder_L_Shoulder
+    7400000: Take 001
+    9500000: //RootNode
+    13700000: Chest_L_Shoulder_L_Shoulder
+    13700002: Chest_R_Shoulder_R_Shoulder
+    2186277476908879412: ImportLogs
+  externalObjects: {}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    previousCalculatedGlobalScale: 0.01
+    hasPreviousCalculatedGlobalScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

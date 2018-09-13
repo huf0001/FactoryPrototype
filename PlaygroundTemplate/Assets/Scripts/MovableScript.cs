@@ -21,8 +21,17 @@ public class MovableScript : IdentifiableScript
     {
         body = this.gameObject.GetComponent<Rigidbody>();
         body.useGravity = true;
-        tempLeftParent = GameObject.Find("GameController").GetComponent<GameControllerScript>().LeftHand;
-        tempRightParent = GameObject.Find("GameController").GetComponent<GameControllerScript>().RightHand;
+
+        if (tempLeftParent == null)
+        {
+            tempLeftParent = GameObject.Find("GameController").GetComponent<GameControllerScript>().LeftHand;
+        }
+
+        if (tempRightParent == null)
+        {
+            tempRightParent = GameObject.Find("GameController").GetComponent<GameControllerScript>().RightHand;
+        }
+
         leftGuide = tempLeftParent.transform;
         rightGuide = tempRightParent.transform;
         hands = tempLeftParent.GetComponentInParent<PickUpScript>();

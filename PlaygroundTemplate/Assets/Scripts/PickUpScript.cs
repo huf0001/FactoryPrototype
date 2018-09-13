@@ -85,32 +85,6 @@ public class PickUpScript: MonoBehaviour
 
     private void Update()
     {
-        /*RotateView();
-        // the jump state needs to read here to make sure it is not missed
-        if (!m_Jump)
-        {
-            m_Jump = CrossPlatformInputManager.GetButtonDown("Jump");
-        }
-
-        if (!m_ChangeCamera)
-        {
-            m_ChangeCamera = CrossPlatformInputManager.GetButtonDown("ChangeCamera");
-        }
-
-        if (!m_PreviouslyGrounded && m_CharacterController.isGrounded)
-        {
-            StartCoroutine(m_JumpBob.DoBobCycle());
-            PlayLandingSound();
-            m_MoveDir.y = 0f;
-            m_Jumping = false;
-        }
-        if (!m_CharacterController.isGrounded && !m_Jumping && m_PreviouslyGrounded)
-        {
-            m_MoveDir.y = 0f;
-        }
-
-        m_PreviouslyGrounded = m_CharacterController.isGrounded;*/
-
         // Switch to reprogrammable inputs
         if (leftHandPickUp)
         {
@@ -119,7 +93,7 @@ public class PickUpScript: MonoBehaviour
         }
         else
         {
-            CrossPlatformInputManager.GetButtonDown("LeftHandPickUp");
+            leftHandPickUp = CrossPlatformInputManager.GetButtonDown("LeftHandPickUp");
         }
 
         // Switch to reprogrammable inputs
@@ -130,18 +104,8 @@ public class PickUpScript: MonoBehaviour
         }
         else
         {
-            CrossPlatformInputManager.GetButtonDown("RightHandPickUp");
+            rightHandPickUp = CrossPlatformInputManager.GetButtonDown("RightHandPickUp");
         }
-
-        /*if (movingInLeft != null)
-        {
-            GuideHand(movingInLeft, leftHandObject);
-        }
-
-        if (movingInRight != null)
-        {
-            GuideHand(movingInRight, rightHandObject);
-        }*/
     }
 
     private void HandleLeftHandPickUp()
