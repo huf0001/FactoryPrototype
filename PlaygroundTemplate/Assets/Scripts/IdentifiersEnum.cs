@@ -15,6 +15,9 @@ public enum Identifier
 
     // Values that can be used to check if a hand is holding something or if it is empty instead
     HandHolding,
-    HandEmpty
+    HandEmpty,
+
+    // Value denoting that an object is in the build zone and belongs to a schema in the build zone
+    InBuildZone
 }
 

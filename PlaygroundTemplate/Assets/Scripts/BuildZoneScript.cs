@@ -17,12 +17,6 @@ public class BuildZoneScript : MonoBehaviour
             schemas.Add(o.GetComponent<BuildSchemaScript>());
         }
 	}
-	
-	/*// Update is called once per frame
-	void Update ()
-    {
-		
-	}*/
 
     private void OnTriggerStay(Collider other)
     {
@@ -32,33 +26,32 @@ public class BuildZoneScript : MonoBehaviour
 
             foreach (BuildSchemaScript b in schemas)
             {
+                //Debug.Log("BuildZoneTrigger: PlayerMoving is " + ids.HasIdentifier(Identifier.PlayerMoving));
+
                 if (b.BelongsToSchema(ids))
                 {
-                    other.gameObject.GetComponent<Rigidbody>().useGravity = false;
-                    other.gameObject.GetComponent<Rigidbody>().isKinematic = true;
-                    b.HandleValidObject(other.gameObject);
+                    if (!ids.HasIdentifier(Identifier.PlayerMoving) && !ids.HasIdentifier(Identifier.InBuildZone))
+                    {
+                        Debug.Log("Belongs to Schema");
+                        other.gameObject.GetComponent<Rigidbody>().useGravity = false;
+                        other.gameObject.GetComponent<Rigidbody>().isKinematic = true;
+                        ids.AddIdentifier(Identifier.InBuildZone);
+                        b.HandleValidObject(other.gameObject);
 
-                    return;
+                        return;
+                    }
+                    else if (ids.HasIdentifier(Identifier.PlayerMoving) && ids.HasIdentifier(Identifier.InBuildZone))
+                    {
+                        ids.RemoveIdentifier(Identifier.InBuildZone);
+                        b.HandleObjectRemoval(other.gameObject);
+
+                        Debug.Log("Removed from Build Zone");
+
+                        return;
+                    }
                 }
+                
             }
         }
     }
-
-    /*private bool HasValidIdentifier(IdentifiableScript ids)
-    {
-        foreach (Identifier i in buildIdentifiers)
-        {
-            if (ids.HasIdentifier(i))
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private void HandleValidObject(GameObject valid)
-    {
-        
-    }*/
 }

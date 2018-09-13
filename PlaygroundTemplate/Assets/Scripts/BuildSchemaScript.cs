@@ -54,9 +54,9 @@ public class BuildSchemaScript : MonoBehaviour
 
     public bool BelongsToSchema(IdentifiableScript ids)
     {
-        foreach (Identifier i in pendingComponents)
+        foreach (ObjectRolePair p in componentIdentifiers)
         {
-            if (ids.HasIdentifier(i))
+            if (ids.HasIdentifier(p.ObjectIdentifier))
             {
                 return true;
             }
@@ -68,6 +68,7 @@ public class BuildSchemaScript : MonoBehaviour
     public void HandleValidObject(GameObject item)
     {
         LoadObject(item);
+
         if (pendingComponents.Count == 0)
         {
             Build();
@@ -137,5 +138,36 @@ public class BuildSchemaScript : MonoBehaviour
         }
 
         return null;
+    }
+
+    public void HandleObjectRemoval(GameObject item)
+    {
+        //IdentifiableScript itemIds = item.GetComponent<IdentifiableScript>();
+
+        Debug.Log("Trigger HandleObjectRemoval");
+
+        foreach (KeyValuePair<Identifier, GameObject> p in loadedComponents)
+        {
+            if (p.Value == item)
+            {
+                pendingComponents.Add(p.Key);
+                loadedComponents.Remove(p.Key);
+
+                Debug.Log("HandleObjectRemoval resolved");
+
+                return;
+            }
+        }
+
+
+        /*foreach (ObjectRolePair p in componentIdentifiers)
+        {
+            if (itemIds.HasIdentifier(p.ObjectIdentifier))
+            {
+                pendingComponents.Remove(p.ObjectIdentifier);
+                loadedComponents.Add(p.ObjectIdentifier, item);
+                return;
+            }
+        }*/
     }
 }
