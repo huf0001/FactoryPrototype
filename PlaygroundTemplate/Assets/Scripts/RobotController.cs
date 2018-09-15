@@ -80,7 +80,6 @@ public class RobotController : MonoBehaviour {
         lookInputs.y += Input.GetAxis("Mouse X");
         lookInputs.x -= Input.GetAxis("Mouse Y");
         lookInputs.x = Mathf.Clamp(lookInputs.x, -60f, 9f);
-        lookInputs.y = Mathf.Clamp(lookInputs.y, -60f, 60f);
     }
 
     void FixedUpdate()
