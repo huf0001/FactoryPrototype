@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class AttachScript : MonoBehaviour
 {
-    Dictionary<Transform, GameObject> AttachedItems;
-    List<Transform> AvailableGuides;
+    private Dictionary<Transform, GameObject> AttachedItems;
+    private List<Transform> AvailableGuides;
 
     private Identifier compatibleAttachableObjectID;
 
@@ -103,6 +103,7 @@ public class AttachScript : MonoBehaviour
         attaching.GetComponent<Rigidbody>().isKinematic = true;
         attaching.transform.parent = this.gameObject.transform;
         attaching.GetComponent<IdentifiableScript>().AddIdentifier(Identifier.Attached);
+        attaching.GetComponent<IdentifiableScript>().AddIdentifier(Identifier.AttachableButAttached);
         attaching.GetComponent<IdentifiableScript>().RemoveIdentifier(Identifier.Attachable);
         attaching.GetComponent<IdentifiableScript>().RemoveIdentifier(Identifier.Dropped);
         attaching.GetComponent<AttachableScript>().AttachedTo = this;
@@ -189,6 +190,14 @@ public class AttachScript : MonoBehaviour
             {
                 p.Value.layer = 0;
             }
+        }
+    }
+
+    public Dictionary<Transform, GameObject> Attached
+    {
+        get
+        {
+            return AttachedItems;
         }
     }
 }

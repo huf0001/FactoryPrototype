@@ -6,6 +6,11 @@ public class IdentifiableScript : MonoBehaviour
 {
     private List<Identifier> identifiers = new List<Identifier>();
 
+    void Start()
+    {
+        AddIdentifier(Identifier.HasNotBeenLoadedInBuildZoneYet);
+    }
+
     public bool HasIdentifier(Identifier id)
     {
         bool result = false;
