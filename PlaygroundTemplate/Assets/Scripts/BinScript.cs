@@ -11,6 +11,8 @@ public class BinScript : MonoBehaviour
     {
         if (true)
         {
+            Destroy(other.gameObject.GetComponent<MovableScript>());
+            Destroy(other.gameObject.GetComponent<AttachScript>());
             Destroy(other.gameObject);
         }
     }

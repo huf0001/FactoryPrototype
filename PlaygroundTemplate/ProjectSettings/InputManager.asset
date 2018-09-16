@@ -310,7 +310,7 @@ InputManager:
     axis: 0
     joyNum: 0
   - serializedVersion: 3
-    m_Name: LeftHandPickUp
+    m_Name: LeftHandInput
     descriptiveName: 
     descriptiveNegativeName: 
     negativeButton: 
@@ -326,11 +326,27 @@ InputManager:
     axis: 0
     joyNum: 0
   - serializedVersion: 3
-    m_Name: RightHandPickUp
+    m_Name: RightHandInput
     descriptiveName: 
     descriptiveNegativeName: 
     negativeButton: 
     positiveButton: e
+    altNegativeButton: 
+    altPositiveButton: 
+    gravity: 1000
+    dead: 0.001
+    sensitivity: 1000
+    snap: 0
+    invert: 0
+    type: 0
+    axis: 0
+    joyNum: 0
+  - serializedVersion: 3
+    m_Name: ThrowWhenDropped
+    descriptiveName: 
+    descriptiveNegativeName: 
+    negativeButton: 
+    positiveButton: t
     altNegativeButton: 
     altPositiveButton: 
     gravity: 1000
