@@ -46,7 +46,7 @@ public class SpawnItemScript : MonoBehaviour
             }
         }
 
-        Debug.Log("weightedObjects.Count is :" + weightedObjects.Count);
+        // Debug.Log("weightedObjects.Count is :" + weightedObjects.Count);
 	}
 	
 	// Update is called once per frame

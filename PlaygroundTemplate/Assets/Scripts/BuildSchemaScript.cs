@@ -46,10 +46,17 @@ public class BuildSchemaScript : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
-    void Update()
+    public bool BelongsToSchema(GameObject item)
     {
+        IdentifiableScript ids = null;
+        ids = item.GetComponent<IdentifiableScript>();
 
+        if (ids != null)
+        {
+            return BelongsToSchema(ids);
+        }
+
+        return false;
     }
 
     public bool BelongsToSchema(IdentifiableScript ids)
@@ -85,6 +92,7 @@ public class BuildSchemaScript : MonoBehaviour
             {
                 pendingComponents.Remove(p.ObjectIdentifier);
                 loadedComponents.Add(p.ObjectIdentifier, item);
+
                 return;
             }
         }
@@ -101,9 +109,14 @@ public class BuildSchemaScript : MonoBehaviour
 
             if (baseAttacher != null)
             {
-                if (baseAttacher.CheckCanAttach(baseComponent.GetComponent<IdentifiableScript>()))
+                foreach (KeyValuePair<Identifier, GameObject> p in loadedComponents)
                 {
-                    baseAttacher.Attach(baseComponent);
+                    // Do I want to check that p.Value != baseComponent?
+
+                    if (baseAttacher.CheckCanAttach(p.Value.GetComponent<IdentifiableScript>()))
+                    {
+                        baseAttacher.Attach(p.Value);
+                    }
                 }
             }
             else
@@ -142,10 +155,6 @@ public class BuildSchemaScript : MonoBehaviour
 
     public void HandleObjectRemoval(GameObject item)
     {
-        //IdentifiableScript itemIds = item.GetComponent<IdentifiableScript>();
-
-        Debug.Log("Trigger HandleObjectRemoval");
-
         foreach (KeyValuePair<Identifier, GameObject> p in loadedComponents)
         {
             if (p.Value == item)
@@ -153,21 +162,8 @@ public class BuildSchemaScript : MonoBehaviour
                 pendingComponents.Add(p.Key);
                 loadedComponents.Remove(p.Key);
 
-                Debug.Log("HandleObjectRemoval resolved");
-
                 return;
             }
         }
-
-
-        /*foreach (ObjectRolePair p in componentIdentifiers)
-        {
-            if (itemIds.HasIdentifier(p.ObjectIdentifier))
-            {
-                pendingComponents.Remove(p.ObjectIdentifier);
-                loadedComponents.Add(p.ObjectIdentifier, item);
-                return;
-            }
-        }*/
     }
 }

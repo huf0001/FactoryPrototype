@@ -26,13 +26,10 @@ public class BuildZoneScript : MonoBehaviour
 
             foreach (BuildSchemaScript b in schemas)
             {
-                //Debug.Log("BuildZoneTrigger: PlayerMoving is " + ids.HasIdentifier(Identifier.PlayerMoving));
-
                 if (b.BelongsToSchema(ids))
                 {
                     if (!ids.HasIdentifier(Identifier.PlayerMoving) && !ids.HasIdentifier(Identifier.InBuildZone))
                     {
-                        Debug.Log("Belongs to Schema");
                         other.gameObject.GetComponent<Rigidbody>().useGravity = false;
                         other.gameObject.GetComponent<Rigidbody>().isKinematic = true;
                         ids.AddIdentifier(Identifier.InBuildZone);
@@ -45,12 +42,9 @@ public class BuildZoneScript : MonoBehaviour
                         ids.RemoveIdentifier(Identifier.InBuildZone);
                         b.HandleObjectRemoval(other.gameObject);
 
-                        Debug.Log("Removed from Build Zone");
-
                         return;
                     }
                 }
-                
             }
         }
     }

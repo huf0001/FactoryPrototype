@@ -34,7 +34,7 @@ public class IdentifiableScript : MonoBehaviour
         }
     }
 
-    protected List<Identifier> Identifiers
+    /*protected*/ public List<Identifier> Identifiers
     {
         get
         {

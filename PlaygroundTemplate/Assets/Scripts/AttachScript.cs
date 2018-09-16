@@ -39,15 +39,39 @@ public class AttachScript : MonoBehaviour
     //For use if a dropped object collides with this object or an attached object
     public void HandleOnTriggerStay(Collider other)
     {
-        IdentifiableScript temp = other.GetComponent<IdentifiableScript>();
+        IdentifiableScript ids = other.gameObject.GetComponent<IdentifiableScript>();
 
-        if (temp != null)
+        if (ids != null)
         {
-            if (CheckCanAttach(temp))
+            if (!ids.HasIdentifier(Identifier.Attached))
             {
-                Attach(other.gameObject);
+                if (CheckCanAttach(ids))
+                {
+                    Attach(other.gameObject);
+                }
             }
         }
+    }
+
+    //Just checking that there's an available guide object for each new attached object, and that said object
+    //is attachable in the first place
+    public bool CheckCanAttach(IdentifiableScript temp, BuildSchemaScript schema)
+    {
+        bool result = true;
+
+        if (
+                (AvailableGuides.Count == 0) ||
+                (!schema.BelongsToSchema(temp)) ||
+                (
+                    (!temp.HasIdentifier(Identifier.Dropped)) &&
+                    (!temp.HasIdentifier(Identifier.InBuildZone))
+                )
+           )
+        {
+            result = false;
+        }
+
+        return result;
     }
 
     //Just checking that there's an available guide object for each new attached object, and that said object
@@ -56,7 +80,14 @@ public class AttachScript : MonoBehaviour
     {
         bool result = true;
 
-        if ((AvailableGuides.Count == 0)||(!temp.HasIdentifier(compatibleAttachableObjectID))||(!temp.HasIdentifier(Identifier.Dropped)))
+        if (
+                (AvailableGuides.Count == 0)||
+                (!temp.HasIdentifier(compatibleAttachableObjectID))||
+                (
+                    (!temp.HasIdentifier(Identifier.Dropped))&&
+                    (!temp.HasIdentifier(Identifier.InBuildZone))
+                )
+           )
         {
             result = false;
         }

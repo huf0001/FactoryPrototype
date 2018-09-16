@@ -65,15 +65,6 @@ public class MovableScript : IdentifiableScript
         {
             this.gameObject.layer = 2;
         }
-
-        Debug.Log("Picked up");
-        Debug.Log("Identifiers are:");
-
-        foreach (Identifier i in base.Identifiers)
-        {
-            Debug.Log(i);
-        }
-
     }
 
     public virtual void HandleDrop(Hand h)
