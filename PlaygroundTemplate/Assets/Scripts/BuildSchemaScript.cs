@@ -34,6 +34,7 @@ public class BuildSchemaScript : MonoBehaviour
     }
 
     [SerializeField] private ObjectRolePair[] componentIdentifiers;
+    private string buildPointName = "BuildPoint";
     private List<Identifier> pendingComponents = new List<Identifier>();
     private Dictionary<Identifier, GameObject> loadedComponents = new Dictionary<Identifier, GameObject>();
 
@@ -102,6 +103,7 @@ public class BuildSchemaScript : MonoBehaviour
     {
         AttachScript baseAttacher = null;
         GameObject baseComponent = GetBaseComponentAsObjectForBuilding();
+        Transform buildPoint = null;
 
         if (baseComponent != null)
         {
@@ -117,6 +119,19 @@ public class BuildSchemaScript : MonoBehaviour
                     {
                         baseAttacher.Attach(p.Value);
                     }
+                }
+
+                buildPoint = this.transform.parent.Find(buildPointName);
+
+                if (buildPoint != null)
+                {
+                    baseComponent.transform.position = buildPoint.position;
+                    baseComponent.transform.rotation = buildPoint.rotation;
+                }
+                else
+                {
+                    Debug.Log("Warning: Couldn't find the game object '" + buildPointName + "'. " + buildPointName + " should be childed to the build" +
+                        "zone that this schema is attached to.");
                 }
             }
             else
