@@ -14,6 +14,9 @@ public enum Identifier
     // Value denoting that an object is in the build zone and belongs to a schema in the build zone
     InBuildZone,
 
+    // Value denoting that an object has already been built and does not need to be built again
+    Built,
+
     // Value denoting that an object hasn't yet been loaded into the build zone
     HasNotBeenLoadedInBuildZoneYet,
 

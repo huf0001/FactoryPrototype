@@ -5,8 +5,6 @@ using UnityStandardAssets.CrossPlatformInput;
 
 public class PickUpScript: MonoBehaviour
 {
-    // [SerializeField] private GameObject leftHandObject;
-    // [SerializeField] private GameObject rightHandObject;
     [SerializeField] private GameObject leftHandGuide;
     [SerializeField] private GameObject rightHandGuide;
     [SerializeField] private Camera myCamera;

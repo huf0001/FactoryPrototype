@@ -6,18 +6,17 @@ public class BuildSchemaScript : MonoBehaviour
 {
     public enum BuildRole
     {
-        zero,
         BaseComponent,
         AttachableComponent
     }
 
     [System.Serializable]
-    public class ComponentRolePair
+    public class ObjectRolePair
     {
         [SerializeField] private Identifier component;
         [SerializeField] private BuildRole role;
 
-        public Identifier ObjectIdentifier
+        public Identifier Componenet
         {
             get
             {
@@ -35,25 +34,48 @@ public class BuildSchemaScript : MonoBehaviour
     }
 
     [SerializeField] private string buildPointName = "BuildPoint";
-    [SerializeField] private ComponentRolePair[] components;
+    [SerializeField] private float distanceLimit;
+    [SerializeField] private ObjectRolePair[] components;
 
     private List<Identifier> pendingComponents = new List<Identifier>();
     private Dictionary<Identifier, GameObject> loadedComponents = new Dictionary<Identifier, GameObject>();
+    private Transform buildPoint = null;
 
     // Use this for initialization
     void Start()
     {
-        foreach (ComponentRolePair p in components)
+        buildPoint = this.transform.parent.Find(buildPointName);
+
+        if (buildPoint == null)
         {
-            pendingComponents.Add(p.ObjectIdentifier);
+            Debug.Log("Warning: Couldn't find the game object '" + buildPointName + "'. " + buildPointName + " should be childed to the build" +
+                "zone that this schema is attached to.");
         }
+
+        foreach (ObjectRolePair p in components)
+        {
+            pendingComponents.Add(p.Componenet);
+        }
+    }
+
+    public bool BelongsToSchema(GameObject item)
+    {
+        IdentifiableScript ids = null;
+        ids = item.GetComponent<IdentifiableScript>();
+
+        if (ids != null)
+        {
+            return BelongsToSchema(ids);
+        }
+
+        return false;
     }
 
     public bool BelongsToSchema(IdentifiableScript ids)
     {
-        foreach (ComponentRolePair p in components)
+        foreach (ObjectRolePair p in components)
         {
-            if (ids.HasIdentifier(p.ObjectIdentifier))
+            if (ids.HasIdentifier(p.Componenet))
             {
                 return true;
             }
@@ -79,13 +101,15 @@ public class BuildSchemaScript : MonoBehaviour
 
         if (!itemIds.HasIdentifier(Identifier.Attached))
         {
-            foreach (ComponentRolePair orp in components)
+            foreach (ObjectRolePair orp in components)
             {
-                if (itemIds.HasIdentifier(orp.ObjectIdentifier))
+                if (itemIds.HasIdentifier(orp.Componenet))
                 {
-                    pendingComponents.Remove(orp.ObjectIdentifier);
-                    loadedComponents.Add(orp.ObjectIdentifier, item);
+                    pendingComponents.Remove(orp.Componenet);
+                    loadedComponents.Add(orp.Componenet, item);
                     itemIds.RemoveIdentifier(Identifier.HasNotBeenLoadedInBuildZoneYet);
+
+                    MoveTowardsBuildPoint(item);
 
                     if (itemIds.HasIdentifier(Identifier.AttachBase))
                     {
@@ -106,18 +130,30 @@ public class BuildSchemaScript : MonoBehaviour
         }
     }
 
+    private void MoveTowardsBuildPoint(GameObject item)
+    {
+        float increment = 0.1f;
+        float distance = 0f;
+
+        do
+        {
+            distance = Vector3.Distance(item.transform.position, buildPoint.position);
+            item.transform.position = Vector3.MoveTowards(item.transform.position, buildPoint.transform.position, increment);
+        } while (Vector3.Distance(item.transform.position, buildPoint.position) > distanceLimit);
+    }
+
     private void LoadAttachedObject(GameObject item)
     {
         IdentifiableScript itemIds = item.GetComponent<IdentifiableScript>();
 
         if (!CheckIsLoaded(item))
         {
-            foreach (ComponentRolePair orp in components)
+            foreach (ObjectRolePair orp in components)
             {
-                if (itemIds.HasIdentifier(orp.ObjectIdentifier))
+                if (itemIds.HasIdentifier(orp.Componenet))
                 {
-                    pendingComponents.Remove(orp.ObjectIdentifier);
-                    loadedComponents.Add(orp.ObjectIdentifier, item);
+                    pendingComponents.Remove(orp.Componenet);
+                    loadedComponents.Add(orp.Componenet, item);
                     itemIds.RemoveIdentifier(Identifier.HasNotBeenLoadedInBuildZoneYet);
 
                     return;
@@ -143,7 +179,7 @@ public class BuildSchemaScript : MonoBehaviour
     {
         AttachableScript attached = null;
         AttachScript attachBase = null;
-        
+
         foreach (KeyValuePair<Identifier, GameObject> p in loadedComponents)
         {
             if (p.Value == item)
@@ -226,48 +262,55 @@ public class BuildSchemaScript : MonoBehaviour
 
     private void Build()
     {
-        AttachScript baseAttacher = null;
         GameObject baseComponent = GetBaseComponentAsObjectForBuilding();
+        IdentifiableScript baseIds = null;
+        AttachScript baseAttacher = null;
 
         if (baseComponent != null)
         {
-            baseAttacher = baseComponent.GetComponent<AttachScript>();
+            CentreInBuildZone(baseComponent);
+            baseIds = baseComponent.GetComponent<IdentifiableScript>();
 
-            if (baseAttacher != null)
+            if (baseIds != null && !baseIds.HasIdentifier(Identifier.Built))
             {
-                foreach (KeyValuePair<Identifier, GameObject> p in loadedComponents)
+                baseAttacher = baseComponent.GetComponent<AttachScript>();
+
+                if (baseAttacher != null)
                 {
-                    if (baseAttacher.CheckCanAttach(p.Value.GetComponent<IdentifiableScript>()))
+                    foreach (KeyValuePair<Identifier, GameObject> p in loadedComponents)
                     {
-                        baseAttacher.Attach(p.Value);
+                        if (baseAttacher.CheckCanAttach(p.Value.GetComponent<IdentifiableScript>()))
+                        {
+                            baseAttacher.Attach(p.Value);
+                        }
                     }
-                }
 
-                CentreInBuildZone(baseComponent);
-            }
-            else
-            {
-                Debug.Log("Error: Base object in schema does not have an AttachScript component");
+                    baseIds.AddIdentifier(Identifier.Built);
+                }
+                else
+                {
+                    Debug.Log("Error: Base object in schema does not have an AttachScript component");
+                }
             }
         }
     }
 
     private GameObject GetBaseComponentAsObjectForBuilding()
     {
-        ComponentRolePair orp = GetBaseComponentAsObjectRolePair();
+        ObjectRolePair orp = GetBaseComponentAsObjectRolePair();
 
         if (orp != null)
         {
-            GameObject result = loadedComponents[orp.ObjectIdentifier];
+            GameObject result = loadedComponents[orp.Componenet];
             return result;
         }
 
         return null;
     }
 
-    private ComponentRolePair GetBaseComponentAsObjectRolePair()
+    private ObjectRolePair GetBaseComponentAsObjectRolePair()
     {
-        foreach (ComponentRolePair orp in components)
+        foreach (ObjectRolePair orp in components)
         {
             if (orp.Role == BuildRole.BaseComponent)
             {
@@ -280,17 +323,10 @@ public class BuildSchemaScript : MonoBehaviour
 
     private void CentreInBuildZone(GameObject item)
     {
-        Transform buildPoint = this.transform.parent.Find(buildPointName);
-
         if (buildPoint != null)
         {
             item.transform.position = buildPoint.position;
             item.transform.rotation = buildPoint.rotation;
-        }
-        else
-        {
-            Debug.Log("Warning: Couldn't find the game object '" + buildPointName + "'. " + buildPointName + " should be childed to the build " +
-                "zone that this schema is attached to.");
         }
     }
 }

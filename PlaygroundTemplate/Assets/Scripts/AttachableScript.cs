@@ -90,7 +90,6 @@ public class AttachableScript : MovableScript
             //pass to the object this one is attached to
             try
             {
-                //attachedTo.CheckCollisionTrigger(other);
                 transform.parent.GetComponent<MovableScript>().HandlePickUp(h);
             }
 
