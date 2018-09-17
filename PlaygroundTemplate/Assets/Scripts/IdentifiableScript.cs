@@ -38,12 +38,4 @@ public class IdentifiableScript : MonoBehaviour
             identifiers.Remove(id);
         }
     }
-
-    /*protected*/ public List<Identifier> Identifiers
-    {
-        get
-        {
-            return identifiers;
-        }
-    }
 }

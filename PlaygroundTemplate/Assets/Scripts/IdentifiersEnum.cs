@@ -7,16 +7,6 @@ public enum Identifier
     // The "null" identifier
     zero,
 
-    // Generic values for movable and attachable objects
-    Attachable,
-    Attached,
-    AttachableButAttached,
-    PlayerMoving,
-    Dropped,
-
-    // Generic values for attachment base objects
-    AttachBase,
-
     // Values that can be used to check if a hand is holding something or if it is empty instead
     HandHolding,
     HandEmpty,
@@ -27,7 +17,18 @@ public enum Identifier
     // Value denoting that an object hasn't yet been loaded into the build zone
     HasNotBeenLoadedInBuildZoneYet,
 
+    // Generic values for movable and attachable objects
+    Attachable,
+    Attached,
+    PlayerMoving,
+    Dropped,
+
+    // Generic values for attachment base objects
+    AttachBase,
+
     // Values denoting specific objects
+
+    // Values for the test objects used while refining the code
     TestBase,
     TestAttachableA,
     TestAttachableB

@@ -5,16 +5,13 @@ using UnityEngine;
 public class AttachScript : MonoBehaviour
 {
     [SerializeField] private Identifier uniqueID = Identifier.AttachBase;
-    [SerializeField] private List<Identifier> compatibleAttachableObjectIDs = new List<Identifier>();
+    [SerializeField] private List<Identifier> compatibleAttachableObjects = new List<Identifier>();
 
     private Dictionary<Transform, GameObject> AttachedItems;
     private List<Transform> AvailableGuides;
 
-    // private Identifier compatibleAttachableObjectID;
-
     private void Start()
     {
-        // compatibleAttachableObjectID = Identifier.Attachable;
         AttachedItems = new Dictionary<Transform, GameObject>();
         AvailableGuides = new List<Transform>();
 
@@ -47,35 +44,12 @@ public class AttachScript : MonoBehaviour
 
         if (ids != null)
         {
-            // if (!ids.HasIdentifier(Identifier.Attached))
-            // {
-                if (CheckCanAttach(ids))
-                {
-                    Attach(other.gameObject);
-                }
-            // }
+            if (CheckCanAttach(ids))
+            {
+                Attach(other.gameObject);
+            }
         }
     }
-
-    //Just checking that there's an available guide object for each new attached object, and that said object
-    //is attachable in the first place
-    /*public bool CheckCanAttach(IdentifiableScript ids, BuildSchemaScript schema)
-    {
-        if (
-                (AvailableGuides.Count == 0) ||
-                (ids.HasIdentifier(Identifier.Attached))||
-                (!schema.BelongsToSchema(ids)) ||
-                (
-                    (!ids.HasIdentifier(Identifier.Dropped)) &&
-                    (!ids.HasIdentifier(Identifier.InBuildZone))
-                )
-           )
-        {
-            return false;
-        }
-
-        return true;
-    }*/
 
     //Just checking that there's an available guide object for each new attached object, and that said object
     //is attachable in the first place
@@ -99,7 +73,7 @@ public class AttachScript : MonoBehaviour
 
     private bool HasCompatibleAttachableObjectID(IdentifiableScript ids)
     {
-        foreach (Identifier i in compatibleAttachableObjectIDs)
+        foreach (Identifier i in compatibleAttachableObjects)
         {
             if (ids.HasIdentifier(i))
             {
@@ -118,7 +92,6 @@ public class AttachScript : MonoBehaviour
         attaching.GetComponent<Rigidbody>().isKinematic = true;
         attaching.transform.parent = this.gameObject.transform;
         attaching.GetComponent<IdentifiableScript>().AddIdentifier(Identifier.Attached);
-        attaching.GetComponent<IdentifiableScript>().AddIdentifier(Identifier.AttachableButAttached);
         attaching.GetComponent<IdentifiableScript>().RemoveIdentifier(Identifier.Attachable);
         attaching.GetComponent<IdentifiableScript>().RemoveIdentifier(Identifier.Dropped);
         attaching.GetComponent<AttachableScript>().AttachedTo = this;

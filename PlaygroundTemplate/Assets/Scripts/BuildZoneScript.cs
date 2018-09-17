@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class BuildZoneScript : MonoBehaviour
 {
-    // [SerializeField] private Identifier[] buildIdentifiers;
     [SerializeField] private GameObject[] buildSchemaObjects;
 
     private List<BuildSchemaScript> schemas = new List<BuildSchemaScript>();

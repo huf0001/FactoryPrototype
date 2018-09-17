@@ -5,7 +5,7 @@ using UnityEngine;
 public class AttachableScript : MovableScript
 {
     [SerializeField] private Identifier uniqueID = Identifier.Attachable;
-    [SerializeField] private Identifier compatibleAttachBaseID = Identifier.AttachBase;
+    [SerializeField] private Identifier compatibleBase = Identifier.AttachBase;
     private AttachScript attachedTo;
 
     // Use this for initialization
@@ -19,7 +19,6 @@ public class AttachableScript : MovableScript
         base.HandleStart();
         AddIdentifier(Identifier.Attachable);
         AddIdentifier(uniqueID);
-        // compatibleAttachBaseID = Identifier.AttachBase;
     }
 
     //If this is attached to something, this passes the colliding object to the attached base object
@@ -48,7 +47,7 @@ public class AttachableScript : MovableScript
 
         if (identifiable != null)
         {
-            if ((identifiable.HasIdentifier(compatibleAttachBaseID)) || (identifiable.HasIdentifier(Identifier.Attached)))
+            if ((identifiable.HasIdentifier(compatibleBase)) || (identifiable.HasIdentifier(Identifier.Attached)))
             {
                 fallenOnAttachBase = true;
             }
