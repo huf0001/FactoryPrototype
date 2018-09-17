@@ -13,25 +13,25 @@ public class BuildSchemaScript : MonoBehaviour
     [System.Serializable]
     public class ObjectRolePair
     {
-        [SerializeField] private Identifier primaryObjectIdentifier;
-        [SerializeField] private Identifier secondaryObjectIdentifier;
+        [SerializeField] private Identifier objectIdentifier;
+        // [SerializeField] private Identifier secondaryObjectIdentifier;
         [SerializeField] private BuildRole role;
 
         public Identifier ObjectIdentifier
         {
             get
             {
-                return primaryObjectIdentifier;
+                return objectIdentifier;
             }
         }
 
-        public Identifier SecondaryIdentifier
+        /*public Identifier SecondaryIdentifier
         {
             get
             {
                 return secondaryObjectIdentifier;
             }
-        }
+        }*/
 
         public BuildRole Role
         {
@@ -43,7 +43,8 @@ public class BuildSchemaScript : MonoBehaviour
     }
 
     [SerializeField] private ObjectRolePair[] componentIdentifiers;
-    private string buildPointName = "BuildPoint";
+    [SerializeField] private string buildPointName = "BuildPoint";
+
     private List<Identifier> pendingComponents = new List<Identifier>();
     private Dictionary<Identifier, GameObject> loadedComponents = new Dictionary<Identifier, GameObject>();
 
@@ -100,6 +101,61 @@ public class BuildSchemaScript : MonoBehaviour
     {
         IdentifiableScript itemIds = item.GetComponent<IdentifiableScript>();
         AttachScript attachBase = null;
+        // AttachableScript attached = null;
+
+        Debug.Log("Loading object. Object is " + item);
+
+        if (itemIds.HasIdentifier(Identifier.Attached))
+        {
+            Debug.Log("Not loading " + item + " yet because it is attached. Will load when it's attach base loads it.");
+        }
+        else
+        { 
+            foreach (ObjectRolePair orp in componentIdentifiers)
+            {
+                if (itemIds.HasIdentifier(orp.ObjectIdentifier))
+                {
+                    pendingComponents.Remove(orp.ObjectIdentifier);
+                    loadedComponents.Add(orp.ObjectIdentifier, item);
+                    itemIds.RemoveIdentifier(Identifier.HasNotBeenLoadedInBuildZoneYet);
+
+                    Debug.Log("Item loaded is " + orp.ObjectIdentifier);
+
+                    /*if (itemIds.HasIdentifier(Identifier.Attached))
+                    {
+                        attached = itemIds.gameObject.GetComponent<AttachableScript>();
+
+                        if (attached != null)
+                        {
+                            LoadAttachBaseObject(attached.AttachedTo.gameObject);
+                        }
+                    }
+                    else*/
+                    if (itemIds.HasIdentifier(Identifier.AttachBase))
+                    {
+                        attachBase = itemIds.gameObject.GetComponent<AttachScript>();
+
+                        if (attachBase != null)
+                        {
+                            Debug.Log("Loading objects attached to base object...");
+                            foreach (KeyValuePair<Transform, GameObject> kvp in attachBase.Attached)
+                            {
+                                Debug.Log("Attached object is " + kvp.Value);
+                                LoadAttachedObject(kvp.Value);
+                            }
+                        }
+                    }
+
+                    return;
+                }
+            }
+        }
+    }
+
+    /*private void LoadAttachBaseObject(GameObject item)
+    {
+        IdentifiableScript itemIds = item.GetComponent<IdentifiableScript>();
+        AttachScript attachBase = null;
 
         Debug.Log("Loading object. Object is " + item);
 
@@ -131,32 +187,178 @@ public class BuildSchemaScript : MonoBehaviour
                 return;
             }
         }
-    }
+    }*/
 
     private void LoadAttachedObject(GameObject item)
     {
         IdentifiableScript itemIds = item.GetComponent<IdentifiableScript>();
 
-        Debug.Log("Loading attached object. Object is " + item);
+        Debug.Log("Running LoadAttachedObject(). Object is " + item);
 
-        foreach (ObjectRolePair orp in componentIdentifiers)
+        if (!CheckIsLoaded(item))
         {
-            if (itemIds.HasIdentifier(orp.SecondaryIdentifier))
+            Debug.Log("CheckIsLoaded() returned false for " + item);
+
+            foreach (ObjectRolePair orp in componentIdentifiers)
             {
-                Debug.Log("Attached item has secondary identifier " + orp.SecondaryIdentifier);
+                if (itemIds.HasIdentifier(orp.ObjectIdentifier))
+                {
+                    Debug.Log("Attached item has unique identifier " + orp.ObjectIdentifier);
 
-                pendingComponents.Remove(orp.ObjectIdentifier);
-                loadedComponents.Add(orp.ObjectIdentifier, item);
-                itemIds.RemoveIdentifier(Identifier.HasNotBeenLoadedInBuildZoneYet);
+                    pendingComponents.Remove(orp.ObjectIdentifier);
+                    loadedComponents.Add(orp.ObjectIdentifier, item);
+                    itemIds.RemoveIdentifier(Identifier.HasNotBeenLoadedInBuildZoneYet);
 
-                Debug.Log("Attached object loaded is " + orp.ObjectIdentifier);
+                    Debug.Log("Attached object loaded is " + orp.ObjectIdentifier);
+
+                    return;
+                }
+                else
+                {
+                    Debug.Log("Attached item doesn't have unique identifier " + orp.ObjectIdentifier);
+                }
+            }
+        }
+        else
+        {
+            Debug.Log(item + " is already loaded.");
+        }
+    }
+
+    private bool CheckIsLoaded(GameObject item)
+    {
+        foreach (KeyValuePair<Identifier, GameObject> p in loadedComponents)
+        {
+            if (p.Value == item)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public void RemoveObject(GameObject item)
+    {
+        Debug.Log("Running RemoveObject() on " + item + "...");
+
+        AttachableScript attached = null;
+        AttachScript attachBase = null;
+
+        Debug.Log("Loaded components are:");
+
+        foreach (KeyValuePair<Identifier, GameObject> p in loadedComponents)
+        {
+            Debug.Log(p.Value);
+        }
+        
+        foreach (KeyValuePair<Identifier, GameObject> p in loadedComponents)
+        {
+            Debug.Log("item is " + item + ". p.Value is " + p.Value + ".");
+
+            if (p.Value == item)
+            {
+                Debug.Log("Removing " + item + "...");
+
+                pendingComponents.Add(p.Key);
+                loadedComponents.Remove(p.Key);
+
+                if (item.GetComponent<IdentifiableScript>().HasIdentifier(Identifier.Attached))
+                {
+                    attached = item.GetComponent<AttachableScript>();
+
+                    if (attached != null)
+                    {
+                        Debug.Log("Removing base object that " + item + " is attached to...");
+
+                        RemoveAttachBaseObject(attached.AttachedTo.gameObject);
+                    }
+                }
+                else if (item.GetComponent<IdentifiableScript>().HasIdentifier(Identifier.AttachBase))
+                {
+                    attachBase = item.GetComponent<AttachScript>();
+
+                    if (attachBase != null)
+                    {
+                        Debug.Log("Removing objects attached to " + item + "...");
+
+                        foreach (KeyValuePair<Transform, GameObject> kvp in attachBase.Attached)
+                        {
+                            Debug.Log("Attached object is " + kvp.Value);
+                            RemoveAttachedObject(kvp.Value);
+                        }
+                    }
+                }
+
+                Debug.Log(item + " has been removed.");
+                
+                return;
+            }
+        }
+    }
+
+    private void RemoveAttachBaseObject(GameObject item)
+    {
+        Debug.Log("Running RemoveAttachBaseObject() on " + item + "...");
+
+        AttachScript attachBase = null;
+
+        foreach (KeyValuePair<Identifier, GameObject> p in loadedComponents)
+        {
+            if (p.Value == item)
+            {
+                Debug.Log("Removing " + item + "...");
+
+                pendingComponents.Add(p.Key);
+                loadedComponents.Remove(p.Key);
+
+                if (item.GetComponent<IdentifiableScript>().HasIdentifier(Identifier.AttachBase))
+                {
+                    attachBase = item.GetComponent<AttachScript>();
+
+                    if (attachBase != null)
+                    {
+                        Debug.Log("Removing objects attached to " + item + "...");
+
+                        foreach (KeyValuePair<Transform, GameObject> kvp in attachBase.Attached)
+                        {
+                            Debug.Log("Attached object is " + kvp.Value);
+                            RemoveAttachedObject(kvp.Value);
+                        }
+                    }
+                }
+
+                Debug.Log(item + " has been removed.");
 
                 return;
             }
-            else
+        }
+    }
+
+    private void RemoveAttachedObject(GameObject item)
+    {
+        Debug.Log("Running RemoveAttachedObject() on " + item + "...");
+
+        if (CheckIsLoaded(item))
+        {
+            foreach (KeyValuePair<Identifier, GameObject> p in loadedComponents)
             {
-                Debug.Log("Attached item doesn't have identifier " + orp.ObjectIdentifier);
+                if (p.Value == item)
+                {
+                    Debug.Log("Removing " + item + "...");
+
+                    pendingComponents.Add(p.Key);
+                    loadedComponents.Remove(p.Key);
+
+                    Debug.Log(item + " has been removed.");
+
+                    return;
+                }
             }
+        }
+        else
+        {
+            Debug.Log("Cannot remove " + item + ". It is not loaded to begin with.");
         }
     }
 
@@ -164,8 +366,22 @@ public class BuildSchemaScript : MonoBehaviour
     {
         Debug.Log("Running BuildSchemaScript.Build()");
 
+        Debug.Log("Loaded components before building are:");
+
+        foreach (KeyValuePair<Identifier, GameObject> p in loadedComponents)
+        {
+            Debug.Log(p.Value);
+        }
+
         AttachScript baseAttacher = null;
         GameObject baseComponent = GetBaseComponentAsObjectForBuilding();
+
+        Debug.Log("Loaded components after getting the base component for building but before building are:");
+
+        foreach (KeyValuePair<Identifier, GameObject> p in loadedComponents)
+        {
+            Debug.Log(p.Value);
+        }
 
         if (baseComponent != null)
         {
@@ -183,6 +399,13 @@ public class BuildSchemaScript : MonoBehaviour
                     }
                 }
 
+                Debug.Log("Loaded components after building and before centering are:");
+
+                foreach (KeyValuePair<Identifier, GameObject> p in loadedComponents)
+                {
+                    Debug.Log(p.Value);
+                }
+
                 CentreInBuildZone(baseComponent);
             }
             else
@@ -190,6 +413,15 @@ public class BuildSchemaScript : MonoBehaviour
                 Debug.Log("Error: Base object in schema does not have an AttachScript component");
             }
         }
+
+        Debug.Log("Loaded components after building are:");
+
+        foreach (KeyValuePair<Identifier, GameObject> p in loadedComponents)
+        {
+            Debug.Log(p.Value);
+        }
+
+        Debug.Log("Finished running Build().");
     }
 
     private GameObject GetBaseComponentAsObjectForBuilding()
@@ -199,7 +431,6 @@ public class BuildSchemaScript : MonoBehaviour
         if (orp != null)
         {
             GameObject result = loadedComponents[orp.ObjectIdentifier];
-            loadedComponents.Remove(orp.ObjectIdentifier);
             return result;
         }
 
@@ -217,20 +448,6 @@ public class BuildSchemaScript : MonoBehaviour
         }
 
         return null;
-    }
-
-    public void HandleObjectRemoval(GameObject item)
-    {
-        foreach (KeyValuePair<Identifier, GameObject> p in loadedComponents)
-        {
-            if (p.Value == item)
-            {
-                pendingComponents.Add(p.Key);
-                loadedComponents.Remove(p.Key);
-
-                return;
-            }
-        }
     }
 
     private void CentreInBuildZone(GameObject item)

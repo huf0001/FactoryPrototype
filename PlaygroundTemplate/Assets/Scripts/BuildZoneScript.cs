@@ -40,7 +40,7 @@ public class BuildZoneScript : MonoBehaviour
                     else if (ids.HasIdentifier(Identifier.PlayerMoving) && ids.HasIdentifier(Identifier.InBuildZone))
                     {
                         ids.RemoveIdentifier(Identifier.InBuildZone);
-                        b.HandleObjectRemoval(other.gameObject);
+                        b.RemoveObject(other.gameObject);
 
                         return;
                     }

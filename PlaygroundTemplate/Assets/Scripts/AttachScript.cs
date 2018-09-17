@@ -4,14 +4,17 @@ using UnityEngine;
 
 public class AttachScript : MonoBehaviour
 {
+    [SerializeField] private Identifier uniqueID = Identifier.AttachBase;
+    [SerializeField] private List<Identifier> compatibleAttachableObjectIDs = new List<Identifier>();
+
     private Dictionary<Transform, GameObject> AttachedItems;
     private List<Transform> AvailableGuides;
 
-    private Identifier compatibleAttachableObjectID;
+    // private Identifier compatibleAttachableObjectID;
 
     private void Start()
     {
-        compatibleAttachableObjectID = Identifier.Attachable;
+        // compatibleAttachableObjectID = Identifier.Attachable;
         AttachedItems = new Dictionary<Transform, GameObject>();
         AvailableGuides = new List<Transform>();
 
@@ -23,6 +26,7 @@ public class AttachScript : MonoBehaviour
         if (this.gameObject.GetComponent<IdentifiableScript>() != null)
         {
             this.gameObject.GetComponent<IdentifiableScript>().AddIdentifier(Identifier.AttachBase);
+            this.gameObject.GetComponent<IdentifiableScript>().AddIdentifier(uniqueID);
         }
         else
         {
@@ -43,56 +47,67 @@ public class AttachScript : MonoBehaviour
 
         if (ids != null)
         {
-            if (!ids.HasIdentifier(Identifier.Attached))
-            {
+            // if (!ids.HasIdentifier(Identifier.Attached))
+            // {
                 if (CheckCanAttach(ids))
                 {
                     Attach(other.gameObject);
                 }
-            }
+            // }
         }
     }
 
     //Just checking that there's an available guide object for each new attached object, and that said object
     //is attachable in the first place
-    public bool CheckCanAttach(IdentifiableScript temp, BuildSchemaScript schema)
+    /*public bool CheckCanAttach(IdentifiableScript ids, BuildSchemaScript schema)
     {
-        bool result = true;
-
         if (
                 (AvailableGuides.Count == 0) ||
-                (!schema.BelongsToSchema(temp)) ||
+                (ids.HasIdentifier(Identifier.Attached))||
+                (!schema.BelongsToSchema(ids)) ||
                 (
-                    (!temp.HasIdentifier(Identifier.Dropped)) &&
-                    (!temp.HasIdentifier(Identifier.InBuildZone))
+                    (!ids.HasIdentifier(Identifier.Dropped)) &&
+                    (!ids.HasIdentifier(Identifier.InBuildZone))
                 )
            )
         {
-            result = false;
+            return false;
         }
 
-        return result;
-    }
+        return true;
+    }*/
 
     //Just checking that there's an available guide object for each new attached object, and that said object
     //is attachable in the first place
-    public bool CheckCanAttach(IdentifiableScript temp)
+    public bool CheckCanAttach(IdentifiableScript ids)
     {
-        bool result = true;
-
         if (
                 (AvailableGuides.Count == 0)||
-                (!temp.HasIdentifier(compatibleAttachableObjectID))||
+                (ids.HasIdentifier(Identifier.Attached))||
+                (!HasCompatibleAttachableObjectID(ids))||
                 (
-                    (!temp.HasIdentifier(Identifier.Dropped))&&
-                    (!temp.HasIdentifier(Identifier.InBuildZone))
+                    (!ids.HasIdentifier(Identifier.Dropped))&&
+                    (!ids.HasIdentifier(Identifier.InBuildZone))
                 )
            )
         {
-            result = false;
+            return false;
         }
 
-        return result;
+        return true;
+    }
+
+    private bool HasCompatibleAttachableObjectID(IdentifiableScript ids)
+    {
+        foreach (Identifier i in compatibleAttachableObjectIDs)
+        {
+            if (ids.HasIdentifier(i))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     //Attaches attachable objects to this object

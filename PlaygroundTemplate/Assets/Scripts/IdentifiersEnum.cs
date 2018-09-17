@@ -25,6 +25,11 @@ public enum Identifier
     InBuildZone,
 
     // Value denoting that an object hasn't yet been loaded into the build zone
-    HasNotBeenLoadedInBuildZoneYet
+    HasNotBeenLoadedInBuildZoneYet,
+
+    // Values denoting specific objects
+    TestBase,
+    TestAttachableA,
+    TestAttachableB
 }
 
