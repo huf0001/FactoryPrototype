@@ -4,15 +4,38 @@ using UnityEngine;
 
 public class AttachScript : MonoBehaviour
 {
-    Dictionary<Transform, GameObject> AttachedItems;
-    List<Transform> AvailableGuides;
+    [System.Serializable]
+    public class ComponentGuidePair
+    {
+        [SerializeField] private Identifier component;
+        [SerializeField] private GameObject guide;
 
-    private Identifier compatibleAttachableObjectID;
+        public Identifier Component
+        {
+            get
+            {
+                return component;
+            }
+        }
+
+        public GameObject Guide
+        {
+            get
+            {
+                return guide;
+            }
+        }
+    }
+
+    [SerializeField] private Identifier uniqueID = Identifier.AttachBase;
+    [SerializeField] private List<ComponentGuidePair> attachableComponents = new List<ComponentGuidePair>();
+
+    private Dictionary<Transform, GameObject> AttachedComponents;
+    private List<Transform> AvailableGuides;
 
     private void Start()
     {
-        compatibleAttachableObjectID = Identifier.Attachable;
-        AttachedItems = new Dictionary<Transform, GameObject>();
+        AttachedComponents = new Dictionary<Transform, GameObject>();
         AvailableGuides = new List<Transform>();
 
         for(int i = 0; i < transform.childCount; i++)
@@ -23,6 +46,7 @@ public class AttachScript : MonoBehaviour
         if (this.gameObject.GetComponent<IdentifiableScript>() != null)
         {
             this.gameObject.GetComponent<IdentifiableScript>().AddIdentifier(Identifier.AttachBase);
+            this.gameObject.GetComponent<IdentifiableScript>().AddIdentifier(uniqueID);
         }
         else
         {
@@ -39,11 +63,11 @@ public class AttachScript : MonoBehaviour
     //For use if a dropped object collides with this object or an attached object
     public void HandleOnTriggerStay(Collider other)
     {
-        IdentifiableScript temp = other.GetComponent<IdentifiableScript>();
+        IdentifiableScript ids = other.gameObject.GetComponent<IdentifiableScript>();
 
-        if (temp != null)
+        if (ids != null)
         {
-            if (CheckCanAttach(temp))
+            if (CheckCanAttach(ids))
             {
                 Attach(other.gameObject);
             }
@@ -52,17 +76,57 @@ public class AttachScript : MonoBehaviour
 
     //Just checking that there's an available guide object for each new attached object, and that said object
     //is attachable in the first place
-    public bool CheckCanAttach(IdentifiableScript temp)
+    public bool CheckCanAttach(IdentifiableScript ids)
     {
-        bool result = true;
-
-        if ((AvailableGuides.Count == 0)||(!temp.HasIdentifier(compatibleAttachableObjectID))||(!temp.HasIdentifier(Identifier.Dropped)))
+        if (
+                // (AvailableGuides.Count == 0)||
+                (ids.HasIdentifier(Identifier.Attached))||
+                // (!HasCompatibleAttachableObjectID(ids))||
+                (!CheckGuideIsAvailable(ids)) ||
+                (
+                    (!ids.HasIdentifier(Identifier.Dropped))&&
+                    (!ids.HasIdentifier(Identifier.InBuildZone))
+                )
+           )
         {
-            result = false;
+            return false;
         }
 
-        return result;
+        return true;
     }
+
+    private bool CheckGuideIsAvailable(IdentifiableScript ids)
+    {
+        foreach (ComponentGuidePair p in attachableComponents)
+        {
+            if (ids.HasIdentifier(p.Component))
+            {
+                if (AvailableGuides.Contains(p.Guide.transform))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /*private bool HasCompatibleAttachableObjectID(IdentifiableScript ids)
+    {
+        foreach (ComponentGuidePair p in attachableComponents)
+        {
+            if (ids.HasIdentifier(p.Component))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }*/
 
     //Attaches attachable objects to this object
     public void Attach(GameObject attaching)
@@ -80,15 +144,31 @@ public class AttachScript : MonoBehaviour
     //Assigns the object being attached to an appropriate attached object slot (and guide object?)
     private void AssignAttaching(GameObject attaching)
     {
-        Transform tempGuide = AvailableGuides[0];
-        AvailableGuides.Remove(tempGuide);
-        AttachedItems.Add(tempGuide, attaching);
+        // Transform tempGuide = AvailableGuides[0];
+
+        foreach (ComponentGuidePair p in attachableComponents)
+        {
+            if (attaching.GetComponent<IdentifiableScript>().HasIdentifier(p.Component))
+            {
+                if (AvailableGuides.Contains(p.Guide.transform))
+                {
+                    AvailableGuides.Remove(p.Guide.transform);
+                    AttachedComponents.Add(p.Guide.transform, attaching);
+                }
+                else
+                {
+                    Debug.Log("Cannot assign " + attaching + " to " + p.Guide + ", as " + p.Guide + " is already assigned.");
+                }
+
+                return;
+            }
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        foreach (KeyValuePair<Transform, GameObject> p in AttachedItems)
+        foreach (KeyValuePair<Transform, GameObject> p in AttachedComponents)
         {
             UpdateAttached(p.Value, p.Key);
         }
@@ -111,15 +191,15 @@ public class AttachScript : MonoBehaviour
         reAttaching.GetComponent<IdentifiableScript>().RemoveIdentifier(Identifier.Dropped);
         reAttaching.GetComponent<AttachableScript>().AttachedTo = this;
 
-        foreach (KeyValuePair<Transform, GameObject> p in AttachedItems)
+        foreach (KeyValuePair<Transform, GameObject> p in AttachedComponents)
         {
             if (p.Value == reAttaching)
             {
                 Transform k = p.Key;
                 GameObject v = p.Value;
 
-                AttachedItems.Remove(k);
-                AttachedItems.Add(k, v);
+                AttachedComponents.Remove(k);
+                AttachedComponents.Add(k, v);
             }
 
             return;
@@ -128,7 +208,7 @@ public class AttachScript : MonoBehaviour
 
     public Transform GetGuide(GameObject attached)
     {
-        foreach (KeyValuePair<Transform, GameObject> p in AttachedItems)
+        foreach (KeyValuePair<Transform, GameObject> p in AttachedComponents)
         {
             if (p.Value == attached)
             {
@@ -145,7 +225,7 @@ public class AttachScript : MonoBehaviour
         {
             this.gameObject.layer = 2;
 
-            foreach (KeyValuePair<Transform, GameObject> p in AttachedItems)
+            foreach (KeyValuePair<Transform, GameObject> p in AttachedComponents)
             {
                 p.Value.layer = 2;
             }
@@ -154,10 +234,18 @@ public class AttachScript : MonoBehaviour
         {
             this.gameObject.layer = 0;
 
-            foreach (KeyValuePair<Transform, GameObject> p in AttachedItems)
+            foreach (KeyValuePair<Transform, GameObject> p in AttachedComponents)
             {
                 p.Value.layer = 0;
             }
+        }
+    }
+
+    public Dictionary<Transform, GameObject> Attached
+    {
+        get
+        {
+            return AttachedComponents;
         }
     }
 }

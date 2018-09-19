@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class GameControllerScript : MonoBehaviour
 {
+    [SerializeField] private BuildZoneScript buildZone = null;
     [SerializeField] private GameObject playerLeftHand = null;
     [SerializeField] private GameObject playerRightHand = null;
 
@@ -18,6 +19,11 @@ public class GameControllerScript : MonoBehaviour
         if (playerRightHand == null)
         {
             Debug.Log("The game controller is missing the player's right hand");
+        }
+
+        if (buildZone == null)
+        {
+            Debug.Log("The game controller is missing the build zone");
         }
     }
 
@@ -34,6 +40,14 @@ public class GameControllerScript : MonoBehaviour
         get
         {
             return playerRightHand;
+        }
+    }
+
+    public BuildZoneScript BuildZone
+    {
+        get
+        {
+            return buildZone;
         }
     }
 }

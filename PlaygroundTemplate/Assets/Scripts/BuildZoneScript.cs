@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class BuildZoneScript : MonoBehaviour
 {
-    // [SerializeField] private Identifier[] buildIdentifiers;
     [SerializeField] private GameObject[] buildSchemaObjects;
 
     private List<BuildSchemaScript> schemas = new List<BuildSchemaScript>();
@@ -17,12 +16,6 @@ public class BuildZoneScript : MonoBehaviour
             schemas.Add(o.GetComponent<BuildSchemaScript>());
         }
 	}
-	
-	/*// Update is called once per frame
-	void Update ()
-    {
-		
-	}*/
 
     private void OnTriggerStay(Collider other)
     {
@@ -34,31 +27,37 @@ public class BuildZoneScript : MonoBehaviour
             {
                 if (b.BelongsToSchema(ids))
                 {
-                    other.gameObject.GetComponent<Rigidbody>().useGravity = false;
-                    other.gameObject.GetComponent<Rigidbody>().isKinematic = true;
-                    b.HandleValidObject(other.gameObject);
+                    if (!ids.HasIdentifier(Identifier.PlayerMoving) && !ids.HasIdentifier(Identifier.InBuildZone))
+                    {
+                        other.gameObject.GetComponent<Rigidbody>().useGravity = false;
+                        other.gameObject.GetComponent<Rigidbody>().isKinematic = true;
+                        ids.AddIdentifier(Identifier.InBuildZone);
+                        b.HandleValidObject(other.gameObject);
 
-                    return;
+                        return;
+                    }
                 }
             }
         }
     }
 
-    /*private bool HasValidIdentifier(IdentifiableScript ids)
+    public void RemoveObject(IdentifiableScript ids)
     {
-        foreach (Identifier i in buildIdentifiers)
+        GameObject item = ids.gameObject;
+
+        if (ids.HasIdentifier(Identifier.PlayerMoving) && ids.HasIdentifier(Identifier.InBuildZone))
         {
-            if (ids.HasIdentifier(i))
+            foreach (BuildSchemaScript b in schemas)
             {
-                return true;
+                if (b.BelongsToSchema(ids))
+                {
+                    ids.RemoveIdentifier(Identifier.InBuildZone);
+                    b.RemoveObject(item);
+
+                    return;
+                }
             }
         }
-
-        return false;
-    }
-
-    private void HandleValidObject(GameObject valid)
-    {
         
-    }*/
+    }
 }

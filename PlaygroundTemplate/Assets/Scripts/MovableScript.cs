@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class MovableScript : IdentifiableScript
 {
-    [SerializeField] private GameObject tempLeftParent;
-    [SerializeField] private GameObject tempRightParent;
+    /*[SerializeField]*/ private BuildZoneScript buildZone;
+    /*[SerializeField]*/ private GameObject tempLeftParent;
+    /*[SerializeField]*/ private GameObject tempRightParent;
     private Transform leftGuide;
     private Transform rightGuide;
     private PickUpScript hands;
@@ -19,10 +20,25 @@ public class MovableScript : IdentifiableScript
 
     protected virtual void HandleStart()
     {
+        GameControllerScript gameController = GameObject.Find("GameController").GetComponent<GameControllerScript>();
         body = this.gameObject.GetComponent<Rigidbody>();
         body.useGravity = true;
-        tempLeftParent = GameObject.Find("GameController").GetComponent<GameControllerScript>().LeftHand;
-        tempRightParent = GameObject.Find("GameController").GetComponent<GameControllerScript>().RightHand;
+
+        if (tempLeftParent == null)
+        {
+            tempLeftParent = gameController.LeftHand;
+        }
+
+        if (tempRightParent == null)
+        {
+            tempRightParent = gameController.RightHand;
+        }
+
+        if (buildZone == null)
+        {
+            buildZone = gameController.BuildZone;
+        }
+
         leftGuide = tempLeftParent.transform;
         rightGuide = tempRightParent.transform;
         hands = tempLeftParent.GetComponentInParent<PickUpScript>();
@@ -56,6 +72,8 @@ public class MovableScript : IdentifiableScript
         {
             this.gameObject.layer = 2;
         }
+        
+        buildZone.RemoveObject(this);
     }
 
     public virtual void HandleDrop(Hand h)

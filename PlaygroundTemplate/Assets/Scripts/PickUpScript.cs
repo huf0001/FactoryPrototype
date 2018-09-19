@@ -7,10 +7,8 @@ public class PickUpScript: MonoBehaviour
 {
     [SerializeField] private GameObject leftHandGuide;
     [SerializeField] private GameObject rightHandGuide;
-    // [SerializeField] private GameObject leftHandObject;
-    // [SerializeField] private GameObject rightHandObject;
     [SerializeField] private Camera myCamera;
-    // [SerializeField] private float speed;
+    [SerializeField] private bool throwOn = false;
 
     private IdentifiableScript leftIDs;
     private IdentifiableScript rightIDs;
@@ -18,11 +16,16 @@ public class PickUpScript: MonoBehaviour
     private GameObject movingInLeft = null;
     private GameObject movingInRight = null;
 
-    private bool leftHandPickUp = false;
-    private bool rightHandPickUp = false;
+    private bool leftHandInput = false;
+    private bool rightHandInput = false;
+    private bool throwWhenDropped = false;
+
+    [SerializeField] private float throwForce = 5f;
+    [SerializeField] private Vector3 throwOffset;
+    [SerializeField] private Transform headDirection;
 
     // Use this for initialization
-	void Start ()
+    void Start ()
     {
         leftIDs = leftHandGuide.GetComponent<IdentifiableScript>();
         rightIDs = rightHandGuide.GetComponent<IdentifiableScript>();
@@ -85,173 +88,171 @@ public class PickUpScript: MonoBehaviour
 
     private void Update()
     {
-        /*RotateView();
-        // the jump state needs to read here to make sure it is not missed
-        if (!m_Jump)
+        if (leftHandInput)
         {
-            m_Jump = CrossPlatformInputManager.GetButtonDown("Jump");
-        }
-
-        if (!m_ChangeCamera)
-        {
-            m_ChangeCamera = CrossPlatformInputManager.GetButtonDown("ChangeCamera");
-        }
-
-        if (!m_PreviouslyGrounded && m_CharacterController.isGrounded)
-        {
-            StartCoroutine(m_JumpBob.DoBobCycle());
-            PlayLandingSound();
-            m_MoveDir.y = 0f;
-            m_Jumping = false;
-        }
-        if (!m_CharacterController.isGrounded && !m_Jumping && m_PreviouslyGrounded)
-        {
-            m_MoveDir.y = 0f;
-        }
-
-        m_PreviouslyGrounded = m_CharacterController.isGrounded;*/
-
-        // Switch to reprogrammable inputs
-        if (leftHandPickUp)
-        {
-            HandleLeftHandPickUp();
-            leftHandPickUp = false;
+            HandleHandInput(Hand.Left);            
+            leftHandInput = false;
         }
         else
         {
-            CrossPlatformInputManager.GetButtonDown("LeftHandPickUp");
+            leftHandInput = CrossPlatformInputManager.GetButtonDown("LeftHandInput");
         }
 
-        // Switch to reprogrammable inputs
-        if (rightHandPickUp)
+        if (rightHandInput)
         {
-            HandleRightHandPickUp();
-            rightHandPickUp = false;
+            HandleHandInput(Hand.Right);
+            rightHandInput = false;
         }
         else
         {
-            CrossPlatformInputManager.GetButtonDown("RightHandPickUp");
+            rightHandInput = CrossPlatformInputManager.GetButtonDown("RightHandInput");
         }
 
-        /*if (movingInLeft != null)
+        if (throwWhenDropped)
         {
-            GuideHand(movingInLeft, leftHandObject);
+            throwOn = !throwOn;
+            throwWhenDropped = false;
         }
-
-        if (movingInRight != null)
+        else
         {
-            GuideHand(movingInRight, rightHandObject);
-        }*/
+            throwWhenDropped = CrossPlatformInputManager.GetButtonDown("ThrowWhenDropped");
+        }
     }
 
-    private void HandleLeftHandPickUp()
+    private void HandleHandInput(Hand hand)
     {
-        if (IsEmpty(Hand.Left))
+        if (IsEmpty(hand))
         {
-            Ray ray = myCamera.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-
-            if (Physics.Raycast(ray, out hit))
-            {
-                GameObject item = hit.transform.gameObject;
-                bool handledClick = false;
-
-                if (item.GetComponent<AttachableScript>() != null)
-                {
-                    item.GetComponent<AttachableScript>().HandlePickUp(Hand.Left);
-                    handledClick = true;
-                }
-                else if (item.GetComponent<MovableScript>() != null)
-                {
-                    item.GetComponent<MovableScript>().HandlePickUp(Hand.Left);
-                    handledClick = true;
-                }
-
-                if (handledClick)
-                {
-                    movingInLeft = item;
-                    ChangeIDsFromPickUp(Hand.Left);
-                }
-            }
+            HandlePickUp(hand);
         }
-        else if (IsHolding(Hand.Left))
+        else if (IsHolding(hand))
         {
+            HandleDrop(hand);
+        }
+    }
+
+    private void HandlePickUp(Hand hand)
+    {
+        Ray ray = myCamera.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray, out hit))
+        {
+            GameObject item = hit.transform.gameObject;
             bool handledClick = false;
 
+            if (item.GetComponent<AttachableScript>() != null)
+            {
+                item.GetComponent<AttachableScript>().HandlePickUp(hand);
+                handledClick = true;
+            }
+            else if (item.GetComponent<MovableScript>() != null)
+            {
+                item.GetComponent<MovableScript>().HandlePickUp(hand);
+                handledClick = true;
+            }
+
+            if (handledClick)
+            {
+                if (hand == Hand.Left)
+                {
+                    movingInLeft = item;
+                }
+                else
+                {
+                    movingInRight = item;
+                }
+
+                ChangeIDsFromPickUp(hand);
+            }
+        }
+    }
+
+    private void HandleDrop(Hand hand)
+    {
+        bool handledClick = false;
+        AttachableScript attachable = null;
+        MovableScript movable = null;
+        GameObject item = null;
+
+        if (hand == Hand.Left)
+        {
             if (movingInLeft.GetComponent<AttachableScript>() != null)
             {
-                movingInLeft.GetComponent<AttachableScript>().HandleDrop(Hand.Left);
-                handledClick = true;
+                attachable = movingInLeft.GetComponent<AttachableScript>();
             }
             else if (movingInLeft.GetComponent<MovableScript>() != null)
             {
-                movingInLeft.GetComponent<MovableScript>().HandleDrop(Hand.Left);
-                handledClick = true;
-            }
-
-            if (handledClick)
-            {
-                ChangeIDsFromDrop(Hand.Left);
-                movingInLeft = null;
+                movable = movingInLeft.GetComponent<MovableScript>();
             }
         }
-    }
-
-    private void HandleRightHandPickUp()
-    {
-        if (IsEmpty(Hand.Right))
+        else
         {
-            Ray ray = myCamera.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-
-            if (Physics.Raycast(ray, out hit))
-            {
-                GameObject item = hit.transform.gameObject;
-                bool handledClick = false;
-
-                if (item.GetComponent<AttachableScript>() != null)
-                {
-                    item.GetComponent<AttachableScript>().HandlePickUp(Hand.Right);
-                    handledClick = true;
-                }
-                else if (item.GetComponent<MovableScript>() != null)
-                {
-                    item.GetComponent<MovableScript>().HandlePickUp(Hand.Right);
-                    handledClick = true;
-                }
-
-                if (handledClick)
-                {
-                    movingInRight = item;
-                    ChangeIDsFromPickUp(Hand.Right);
-                }
-            }
-        }
-        else if (IsHolding(Hand.Right))
-        {
-            bool handledClick = false;
-
             if (movingInRight.GetComponent<AttachableScript>() != null)
             {
-                movingInRight.GetComponent<AttachableScript>().HandleDrop(Hand.Right);
-                handledClick = true;
+                attachable = movingInRight.GetComponent<AttachableScript>();
             }
             else if (movingInRight.GetComponent<MovableScript>() != null)
             {
-                movingInRight.GetComponent<MovableScript>().HandleDrop(Hand.Right);
-                handledClick = true;
+                movable = movingInRight.GetComponent<MovableScript>();
             }
+        }
 
-            if (handledClick)
+        if (attachable != null)
+        {
+            attachable.HandleDrop(hand);
+            handledClick = true;
+        }
+        else if (movable != null)
+        {
+            movable.HandleDrop(hand);
+            handledClick = true;
+        }
+
+        if (handledClick)
+        {
+            if (hand == Hand.Left)
             {
-                ChangeIDsFromDrop(Hand.Right);
+                item = movingInLeft;
+                movingInLeft = null;
+            }
+            else
+            {
+                item = movingInRight;
                 movingInRight = null;
             }
+
+            if (throwOn)
+            {
+                ThrowObject(item, hand);
+            }
+
+            ChangeIDsFromDrop(hand);
         }
     }
 
-    /*private void GuideHand(GameObject guide, GameObject hand)
+    private void ThrowObject(GameObject projectile, Hand hand)
     {
-        hand.transform.position = Vector3.MoveTowards(hand.transform.position, guide.transform.position, speed * Time.deltaTime);
-    }*/
+        // Adjusting the throwOffset for the hand that's doing the throwing
+        if (hand == Hand.Left)
+        {
+            throwOffset.x = 1f;
+        }
+        else
+        {
+            throwOffset.x = -1f;
+        }
+        
+        //transforms the instantiate position into world space based on the head rotation
+        Vector3 origin = headDirection.TransformDirection(throwOffset);
+
+        //adds force to the objecct
+        if (projectile.GetComponent<Rigidbody>() != null)
+        {
+            Rigidbody projectileRigidbody = projectile.GetComponent<Rigidbody>();
+            projectileRigidbody.AddForce(origin * throwForce, ForceMode.Impulse);
+        }
+        else
+            Debug.LogError("The gameobject you are trying to throw does not have a rigidbody");
+    }
 }
