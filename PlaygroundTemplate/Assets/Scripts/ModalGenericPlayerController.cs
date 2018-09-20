@@ -8,7 +8,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 {
     [RequireComponent(typeof (CharacterController))]
     [RequireComponent(typeof (AudioSource))]
-    public class FirstOrThirdPersonController : MonoBehaviour
+    public class ModalGenericPlayerController : MonoBehaviour
     {
         [SerializeField] private bool thirdPerson = false;
         // [SerializeField] private bool verticalLook = true;
