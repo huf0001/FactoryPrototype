@@ -16,7 +16,7 @@ public class BuildSchemaScript : MonoBehaviour
         [SerializeField] private Identifier component;
         [SerializeField] private BuildRole role;
 
-        public Identifier Componenet
+        public Identifier Component
         {
             get
             {
@@ -54,7 +54,7 @@ public class BuildSchemaScript : MonoBehaviour
 
         foreach (ObjectRolePair p in components)
         {
-            pendingComponents.Add(p.Componenet);
+            pendingComponents.Add(p.Component);
         }
     }
 
@@ -75,9 +75,28 @@ public class BuildSchemaScript : MonoBehaviour
     {
         foreach (ObjectRolePair p in components)
         {
-            if (ids.HasIdentifier(p.Componenet))
+            if (ids.HasIdentifier(p.Component))
             {
                 return true;
+            }
+        }
+
+        return false;
+    }
+
+    public bool IsLoaded(IdentifiableScript ids)
+    {
+        foreach (ObjectRolePair orp in components)
+        {
+            if (ids.HasIdentifier(orp.Component))
+            {
+                foreach (KeyValuePair<Identifier, GameObject> kvp in loadedComponents)
+                {
+                    if (kvp.Key == orp.Component)
+                    {
+                        return true;
+                    }
+                }
             }
         }
 
@@ -103,10 +122,10 @@ public class BuildSchemaScript : MonoBehaviour
         {
             foreach (ObjectRolePair orp in components)
             {
-                if (itemIds.HasIdentifier(orp.Componenet))
+                if (itemIds.HasIdentifier(orp.Component))
                 {
-                    pendingComponents.Remove(orp.Componenet);
-                    loadedComponents.Add(orp.Componenet, item);
+                    pendingComponents.Remove(orp.Component);
+                    loadedComponents.Add(orp.Component, item);
                     itemIds.RemoveIdentifier(Identifier.HasNotBeenLoadedInBuildZoneYet);
 
                     MoveTowardsBuildPoint(item);
@@ -150,10 +169,10 @@ public class BuildSchemaScript : MonoBehaviour
         {
             foreach (ObjectRolePair orp in components)
             {
-                if (itemIds.HasIdentifier(orp.Componenet))
+                if (itemIds.HasIdentifier(orp.Component))
                 {
-                    pendingComponents.Remove(orp.Componenet);
-                    loadedComponents.Add(orp.Componenet, item);
+                    pendingComponents.Remove(orp.Component);
+                    loadedComponents.Add(orp.Component, item);
                     itemIds.RemoveIdentifier(Identifier.HasNotBeenLoadedInBuildZoneYet);
 
                     return;
@@ -301,7 +320,7 @@ public class BuildSchemaScript : MonoBehaviour
 
         if (orp != null)
         {
-            GameObject result = loadedComponents[orp.Componenet];
+            GameObject result = loadedComponents[orp.Component];
             return result;
         }
 

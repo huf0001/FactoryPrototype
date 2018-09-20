@@ -25,7 +25,7 @@ public class BuildZoneScript : MonoBehaviour
 
             foreach (BuildSchemaScript b in schemas)
             {
-                if (b.BelongsToSchema(ids))
+                if (b.BelongsToSchema(ids) && !b.IsLoaded(ids))
                 {
                     if (!ids.HasIdentifier(Identifier.PlayerMoving) && !ids.HasIdentifier(Identifier.InBuildZone))
                     {
